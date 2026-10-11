@@ -1,0 +1,2033 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Désirer comme les autres · Ose Kairos</title>
+<meta name="description" content="Outil d'esprit critique interactif : psychologie de groupe et désir mimétique.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* Seul style hors conteneur : le fond de page */
+body{margin:0;background:#0A1260}
+
+/* ================= VARIABLES & BASE ================= */
+#ok-tool{
+  --bg-0:#0A1260;--bg-1:#16228A;--yellow:#F5C518;--yellow-d:#C99A00;--navy:#0B1550;
+  --light:#EEF1FA;--cream:#FFF6DA;--green:#2E8B57;--green-l:#5BE08F;--red:#C0392B;--red-l:#FF8A7A;
+  --orange:#F08C2E;--ease:cubic-bezier(.22,1,.36,1);--top-h:68px;
+  --f-title:'Bebas Neue','Anton',Impact,sans-serif;--f-text:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  position:relative;min-height:100vh;color:#fff;font-family:var(--f-text);font-size:17px;line-height:1.5;
+  background:linear-gradient(160deg,var(--bg-1),var(--bg-0) 70%);overflow-x:hidden;overflow-x:clip;
+  -webkit-font-smoothing:antialiased;text-align:left;
+}
+#ok-tool *,#ok-tool *::before,#ok-tool *::after{box-sizing:border-box}
+#ok-tool button{font:inherit;color:inherit;margin:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#ok-tool button:disabled{cursor:default}
+#ok-tool h1,#ok-tool h2,#ok-tool h3,#ok-tool p,#ok-tool ul,#ok-tool ol{margin:0}
+#ok-tool a{color:inherit}
+#ok-tool svg{display:block}
+#ok-tool [hidden]{display:none!important}
+#ok-tool :focus{outline:none}
+#ok-tool :focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+#ok-tool .ok-sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:-1px;padding:0;border:0}
+#ok-tool .ok-ic{width:20px;height:20px;flex:none}
+#ok-tool .ok-stage *{scroll-margin-top:calc(var(--top-h) + 16px);scroll-margin-bottom:120px}
+
+/* ================= FOND ================= */
+#ok-tool .ok-bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px) 0 0/48px 48px,
+    linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px) 0 0/48px 48px,
+    radial-gradient(ellipse at 50% -10%,rgba(60,90,230,.45),transparent 60%),
+    linear-gradient(160deg,var(--bg-1),var(--bg-0) 75%);
+  transition:opacity .5s}
+#ok-tool .ok-bg-light{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .5s;
+  background:linear-gradient(rgba(11,21,80,.035) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,rgba(11,21,80,.035) 1px,transparent 1px) 0 0/48px 48px,var(--light)}
+#ok-tool.ok-is-light .ok-bg-light{opacity:1}
+#ok-tool .ok-particle{position:absolute;width:5px;height:5px;border-radius:50%;background:#fff;opacity:.18;animation:ok-drift linear infinite}
+#ok-tool.ok-is-light .ok-particle{opacity:0}
+
+/* ================= BARRE DU HAUT ================= */
+#ok-tool .ok-top{position:fixed;top:0;left:0;right:0;z-index:40;min-height:var(--top-h);display:flex;align-items:center;gap:16px;padding:0 18px;
+  background:rgba(12,22,110,.95);border-bottom:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#ok-tool .ok-close{flex:none;width:44px;height:44px;border:0;background:transparent;border-radius:12px;display:grid;place-items:center;transition:background .15s}
+#ok-tool .ok-close:hover{background:rgba(255,255,255,.12)}
+#ok-tool .ok-nav{flex:1 1 0;min-width:0;display:flex}
+#ok-tool .ok-progress{flex:1;display:flex;align-items:center;list-style:none;padding:0;min-width:0}
+#ok-tool .ok-progress li{flex:1;display:flex;align-items:center;min-width:0}
+#ok-tool .ok-progress li:first-child{flex:0 0 auto}
+#ok-tool .ok-progress li+li::before{content:"";flex:1;height:2px;margin:0 5px;background:rgba(255,255,255,.18);border-radius:2px;transition:background .5s}
+#ok-tool .ok-progress li.is-lit::before{background:var(--yellow)}
+#ok-tool .ok-dot{position:relative;flex:none;width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:#0D176C;color:rgba(255,255,255,.9);
+  font-weight:800;font-size:13px;line-height:1;display:grid;place-items:center;padding:0;transition:transform .15s var(--ease),background .3s,box-shadow .3s,width .3s,height .3s}
+#ok-tool .ok-dot::after{content:"";position:absolute;inset:-8px}
+#ok-tool .ok-dot.is-done{background:var(--yellow);border-color:var(--yellow);color:var(--navy)}
+#ok-tool .ok-dot.is-current{background:var(--yellow);border-color:var(--yellow);color:var(--navy);width:36px;height:36px;box-shadow:0 0 0 6px rgba(245,197,24,.22),0 0 20px rgba(245,197,24,.55)}
+#ok-tool .ok-dot:not(:disabled):hover{transform:translateY(-2px) scale(1.08)}
+#ok-tool .ok-dot svg{width:16px;height:16px}
+#ok-tool .ok-dot.is-new svg path{stroke-dasharray:24;stroke-dashoffset:24;animation:ok-draw .5s .1s var(--ease) forwards}
+#ok-tool .ok-tag{flex:none;border:1.5px solid var(--yellow);border-radius:999px;padding:8px 16px 6px;font-family:var(--f-title);letter-spacing:.09em;font-size:15px;line-height:1;color:var(--yellow);white-space:nowrap;background:rgba(245,197,24,.07)}
+#ok-tool .ok-tag-short{display:none}
+
+/* ================= BAS DE PAGE ================= */
+#ok-tool .ok-back{position:fixed;left:20px;bottom:20px;z-index:40;width:54px;height:54px;border-radius:50%;border:0;background:var(--yellow);color:var(--navy);
+  display:grid;place-items:center;box-shadow:0 4px 0 var(--yellow-d),0 10px 22px rgba(0,0,0,.35);transition:transform .15s var(--ease),box-shadow .15s}
+#ok-tool .ok-back:hover{transform:translateY(-4px)}
+#ok-tool .ok-back .ok-ic{width:24px;height:24px}
+#ok-tool .ok-dock{position:fixed;right:16px;bottom:16px;z-index:40;display:flex;align-items:flex-end;gap:10px}
+#ok-tool .ok-sound{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.28);background:rgba(10,18,80,.9);color:#fff;display:grid;place-items:center;transition:transform .15s var(--ease)}
+#ok-tool .ok-sound:hover{transform:translateY(-4px)}
+#ok-tool .ok-sound[aria-pressed="true"]{border-color:var(--yellow);color:var(--yellow)}
+#ok-tool .ok-mascot{width:68px;height:68px;border-radius:18px;border:0;background:#fff;display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.3);animation:ok-float 3.4s ease-in-out infinite}
+#ok-tool .ok-mascot svg{width:48px;height:48px}
+#ok-tool .ok-mascot.ok-jump{animation:ok-jump .5s var(--ease)}
+#ok-tool .ok-bubble{position:absolute;right:0;bottom:calc(100% + 14px);width:max-content;max-width:min(290px,calc(100vw - 32px));background:#fff;color:var(--navy);
+  padding:12px 16px;border-radius:14px;font-weight:700;font-size:16px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.3);animation:ok-in .3s var(--ease) both}
+#ok-tool .ok-bubble::after{content:"";position:absolute;right:28px;bottom:-8px;border:8px solid transparent;border-top-color:#fff;border-bottom:0}
+#ok-tool.ok-is-light .ok-bubble{box-shadow:0 8px 24px rgba(11,21,80,.25);border:1px solid #D9DEF0}
+
+/* ================= ZONE PRINCIPALE ================= */
+#ok-tool .ok-main{position:relative;z-index:1;padding:calc(var(--top-h) + 30px) 16px 150px}
+#ok-tool .ok-stage{max-width:1100px;margin:0 auto}
+#ok-tool .ok-stage.ok-out-left{animation:ok-out-left .3s var(--ease) both}
+#ok-tool .ok-stage.ok-out-right{animation:ok-out-right .3s var(--ease) both}
+#ok-tool .ok-stage.ok-in-right{animation:ok-in-right .4s var(--ease) both}
+#ok-tool .ok-stage.ok-in-left{animation:ok-in-left .4s var(--ease) both}
+#ok-tool .ok-swap-out{animation:ok-out-left .3s var(--ease) both}
+#ok-tool .ok-swap-in{animation:ok-in-right .4s var(--ease) both}
+
+/* ================= TYPO ================= */
+#ok-tool .ok-title{font-family:var(--f-title);font-weight:400;font-size:clamp(2.2rem,5vw,3.8rem);line-height:1.02;letter-spacing:.01em;text-align:center;text-transform:uppercase;color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.25)}
+#ok-tool .ok-title strong,#ok-tool .ok-bigq strong,#ok-tool .ok-q-caps strong,#ok-tool .ok-y{color:var(--yellow);font-weight:inherit}
+#ok-tool .ok-subcaps{font-family:var(--f-title);font-size:clamp(1.25rem,2.6vw,1.6rem);letter-spacing:.06em;text-align:center;color:rgba(255,255,255,.85);margin-top:6px}
+#ok-tool .ok-mission{text-align:center;font-size:clamp(16px,1.6vw,18px);margin:14px auto 0;max-width:760px;color:rgba(255,255,255,.95)}
+#ok-tool .ok-mission strong{font-weight:900;color:#fff}
+#ok-tool .ok-label{font-size:12.5px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;line-height:1.3}
+#ok-tool .ok-label-y{color:var(--yellow)}
+#ok-tool .ok-center{text-align:center}
+#ok-tool .ok-q-caps{font-family:var(--f-title);font-size:clamp(1.5rem,3vw,2.1rem);letter-spacing:.03em;text-align:center;margin:30px 0 18px}
+#ok-tool .ok-bigq{font-family:var(--f-title);font-size:clamp(1.8rem,3.8vw,2.7rem);line-height:1.08;text-align:center;letter-spacing:.01em;max-width:860px;margin:34px auto 0}
+#ok-tool .ok-gap{height:26px}
+
+/* ================= BOUTON PRINCIPAL ================= */
+#ok-tool .ok-cta-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;margin:34px 0 8px}
+#ok-tool .ok-cta{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:14px 28px;border:0;border-radius:14px;background:var(--yellow);color:var(--navy);
+  font-weight:900;font-size:16px;letter-spacing:.05em;text-transform:uppercase;box-shadow:0 4px 0 var(--yellow-d),0 10px 24px rgba(0,0,0,.25);
+  transition:transform .15s var(--ease),box-shadow .15s,opacity .2s;text-decoration:none;text-align:center}
+#ok-tool .ok-cta .ok-ic{width:20px;height:20px}
+#ok-tool .ok-cta:not(:disabled):hover{transform:scale(1.04);box-shadow:0 4px 0 var(--yellow-d),0 0 0 6px rgba(245,197,24,.18),0 0 30px rgba(245,197,24,.55)}
+#ok-tool .ok-cta:not(:disabled):active{transform:scale(.97)}
+#ok-tool .ok-cta:disabled{opacity:.42;box-shadow:none;filter:saturate(.6)}
+#ok-tool .ok-cta-in{animation:ok-cta-in .5s var(--ease) both}
+#ok-tool .ok-cta-in .ok-cta{animation:ok-glow 1.1s .45s ease-in-out 2}
+#ok-tool .ok-help{font-size:14px;color:rgba(255,255,255,.62);transition:opacity .3s}
+#ok-tool .ok-help.is-off{opacity:0}
+
+/* ================= ANIMATIONS GÉNÉRIQUES ================= */
+#ok-tool .ok-anim-in{animation:ok-in .4s var(--ease) both;animation-delay:var(--d,0ms)}
+#ok-tool .ok-pulse{animation:ok-pulse .2s var(--ease)}
+#ok-tool .ok-fade-out{animation:ok-fade-out .3s var(--ease) both;pointer-events:none}
+#ok-tool .ok-pop{animation:ok-pop .45s var(--ease)}
+
+/* ================= CHOIX A / B / C ================= */
+#ok-tool .ok-choices{display:flex;flex-direction:column;gap:12px}
+#ok-tool .ok-opt{transition:transform .15s var(--ease),box-shadow .15s,opacity .3s,background-color .3s,border-color .3s,color .3s}
+#ok-tool .ok-choice{width:100%;display:flex;align-items:center;gap:14px;min-height:56px;padding:12px 16px;border-radius:14px;text-align:left;font-weight:700;font-size:16.5px;line-height:1.35;
+  background:#fff;color:var(--navy);border:2px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+#ok-tool .ok-choice:not(:disabled):hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(0,0,0,.28)}
+#ok-tool .ok-choice-txt{flex:1}
+#ok-tool .ok-letter{flex:none;width:30px;height:30px;border-radius:8px;background:#E4E8F6;color:var(--navy);display:grid;place-items:center;font-family:var(--f-title);font-size:18px;line-height:1}
+#ok-tool .ok-mark{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;opacity:0}
+#ok-tool .ok-mark svg{width:17px;height:17px}
+#ok-tool .ok-mark svg path{stroke-dasharray:26;stroke-dashoffset:26;animation:ok-draw .4s .1s var(--ease) forwards}
+#ok-tool .is-correct .ok-mark,#ok-tool .is-wrong .ok-mark{opacity:1}
+#ok-tool .ok-choice.is-correct{background:var(--green);border-color:var(--green-l);color:#fff;box-shadow:0 0 0 3px rgba(91,224,143,.35),0 0 24px rgba(91,224,143,.45);opacity:1}
+#ok-tool .ok-choice.is-wrong{background:var(--red);border-color:var(--red-l);color:#fff;box-shadow:0 0 0 3px rgba(255,138,122,.3)}
+#ok-tool .ok-choice.is-correct .ok-letter,#ok-tool .ok-choice.is-wrong .ok-letter{background:rgba(255,255,255,.22);color:#fff}
+#ok-tool .ok-choice.is-correct .ok-mark,#ok-tool .ok-choice.is-wrong .ok-mark{background:rgba(255,255,255,.22)}
+#ok-tool .ok-opt.is-dim{opacity:.45}
+#ok-tool .ok-opt:disabled{cursor:default}
+#ok-tool .ok-opt.ok-bounce{animation:ok-bounce .3s var(--ease)}
+#ok-tool .ok-opt.ok-shake{animation:ok-shake .3s linear}
+/* variante sombre (enquêtes) */
+#ok-tool .ok-choices.is-dark .ok-choice{background:rgba(255,255,255,.07);color:#fff;border:1.5px solid rgba(255,255,255,.2);box-shadow:none}
+#ok-tool .ok-choices.is-dark .ok-choice:not(:disabled):hover{background:rgba(255,255,255,.12);box-shadow:0 10px 24px rgba(0,0,0,.25)}
+#ok-tool .ok-choices.is-dark .ok-letter{background:rgba(255,255,255,.16);color:#fff}
+#ok-tool .ok-choices.is-dark .ok-choice.is-correct{background:rgba(46,139,87,.45);border-color:var(--green-l)}
+#ok-tool .ok-choices.is-dark .ok-choice.is-wrong{background:rgba(192,57,43,.45);border-color:var(--red-l)}
+
+/* ================= CASES D'EXPLICATION ================= */
+#ok-tool .ok-explain{background:var(--cream);color:var(--navy);border:1.5px solid var(--yellow);border-left-width:5px;border-radius:14px;padding:16px 18px;font-size:16.5px;line-height:1.55}
+#ok-tool .ok-explain strong{font-weight:900}
+#ok-tool .ok-explain .ok-label{color:#8A6A00;margin-bottom:6px}
+#ok-tool .ok-res-title{font-family:var(--f-title);font-size:1.5rem;letter-spacing:.03em;line-height:1.1;margin-bottom:4px}
+#ok-tool .ok-res-ok{color:#1F7A47}
+#ok-tool .ok-res-ko{color:#B3281A}
+#ok-tool .ok-tagword{display:inline;background:var(--navy);color:#fff!important;padding:1px 8px;border-radius:6px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;font-size:.92em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+#ok-tool .ok-verdict{background:rgba(255,255,255,.05);border:2px solid var(--yellow);border-radius:16px;padding:16px 20px;font-size:16.5px;line-height:1.55;color:#fff}
+#ok-tool .ok-verdict strong{font-weight:900;color:#fff;text-transform:uppercase;font-size:.95em;letter-spacing:.01em}
+#ok-tool .ok-verdict-h{display:flex;align-items:center;gap:8px;font-family:var(--f-title);font-size:1.45rem;letter-spacing:.05em;color:var(--yellow);line-height:1.1;margin-bottom:6px}
+#ok-tool .ok-verdict-h .ok-ic{width:22px;height:22px}
+#ok-tool .ok-verdict p+p{margin-top:8px}
+#ok-tool .ok-def{color:rgba(255,255,255,.9)}
+#ok-tool .ok-def b{color:var(--yellow);font-weight:900}
+
+/* ================= CARTES ================= */
+#ok-tool .ok-dark{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:16px}
+#ok-tool .ok-panel{background:var(--light);color:var(--navy);border-radius:22px;padding:clamp(18px,3.5vw,40px);box-shadow:0 8px 24px rgba(0,0,0,.25);margin-top:30px;min-height:420px}
+#ok-tool .ok-whitecard{background:#fff;color:var(--navy);border-radius:16px;padding:18px 22px;box-shadow:0 8px 24px rgba(0,0,0,.25);border:2px solid var(--yellow)}
+#ok-tool .ok-whitecard strong{font-weight:900}
+#ok-tool .ok-whitecard .ok-label{color:var(--navy);margin-bottom:8px;letter-spacing:.22em}
+#ok-tool .ok-warnbox{display:flex;gap:14px;align-items:flex-start;border:2px dashed var(--yellow);border-radius:16px;padding:16px 20px;background:rgba(245,197,24,.07);font-size:17px}
+#ok-tool .ok-warnbox .ok-ic{width:28px;height:28px;color:var(--yellow);margin-top:2px}
+#ok-tool .ok-warnbox strong{color:var(--yellow);font-weight:900}
+
+/* ================= CITATION ================= */
+#ok-tool .ok-quote{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-left:5px solid var(--yellow);border-radius:16px;padding:22px 26px;max-width:760px;margin:34px auto 0}
+#ok-tool .ok-quote .ok-label{color:var(--yellow);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+#ok-tool .ok-quote-txt{font-family:var(--f-title);font-size:clamp(1.55rem,3vw,2.15rem);line-height:1.12;letter-spacing:.01em;text-transform:uppercase}
+#ok-tool .ok-quote-txt strong{color:var(--yellow);font-weight:inherit}
+#ok-tool .ok-author{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.14);font-size:14.5px;color:rgba(255,255,255,.85)}
+#ok-tool .ok-author .ok-bookic{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.1);display:grid;place-items:center}
+#ok-tool .ok-author .ok-bookic .ok-ic{width:16px;height:16px}
+#ok-tool .ok-author-name{font-family:var(--f-title);font-size:1.2rem;letter-spacing:.05em;color:#fff}
+#ok-tool .ok-author-role{font-weight:800;color:#fff}
+#ok-tool .ok-sep{opacity:.5}
+#ok-tool .ok-quotes2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:30px}
+#ok-tool .ok-quotes2 .ok-quote{margin:0;max-width:none}
+#ok-tool .ok-quote.is-center{text-align:center;border-left-width:1px;border-color:rgba(255,255,255,.2)}
+#ok-tool .ok-quote.is-center .ok-label{justify-content:center}
+#ok-tool .ok-quote.is-center .ok-author{justify-content:center}
+#ok-tool .ok-quote.is-center .ok-quote-txt{font-family:var(--f-text);font-weight:800;text-transform:none;font-size:clamp(1.3rem,2.6vw,1.75rem);line-height:1.4}
+
+/* ================= ÉTAPE 1 ================= */
+#ok-tool .ok-shoes{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:900px;margin:0 auto}
+#ok-tool .ok-shoe-card{position:relative;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.18);border-radius:18px;padding:18px 22px 16px;display:flex;flex-direction:column;align-items:center;transition:transform .15s var(--ease),box-shadow .2s}
+#ok-tool .ok-shoe-card.is-limited{border-color:rgba(245,197,24,.75);box-shadow:0 0 26px rgba(245,197,24,.12)}
+#ok-tool .ok-shoe-badges{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 10px;min-height:32px}
+#ok-tool .ok-badge-y{background:var(--yellow);color:var(--navy);font-weight:900;font-size:13px;letter-spacing:.12em;padding:6px 12px;border-radius:8px}
+#ok-tool .ok-shoe-note{font-size:14.5px;font-weight:700;color:var(--yellow)}
+#ok-tool .ok-badge-soft{font-size:14.5px;font-weight:700;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.25);padding:4px 12px;border-radius:999px}
+#ok-tool .ok-shoe-img{width:100%;max-width:300px;margin:8px 0 4px}
+#ok-tool .ok-shoe-img svg{width:100%;height:auto}
+#ok-tool .ok-price{font-family:var(--f-title);font-size:clamp(2.4rem,5vw,3.2rem);line-height:1;color:#fff;letter-spacing:.02em}
+#ok-tool .ok-price.ok-tick{animation:ok-tick .2s var(--ease)}
+#ok-tool .ok-range-wrap{width:100%}
+#ok-tool .ok-range{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;cursor:pointer;margin:4px 0 0;--p:50%}
+#ok-tool .ok-range::-webkit-slider-runnable-track{height:10px;border-radius:99px;background:linear-gradient(90deg,var(--yellow) 0 var(--p),rgba(169,193,255,.38) var(--p) 100%)}
+#ok-tool .ok-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;background:var(--yellow);margin-top:-9px;border:3px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.4);transition:transform .15s}
+#ok-tool .ok-range:not(:disabled):hover::-webkit-slider-thumb{transform:scale(1.12)}
+#ok-tool .ok-range::-moz-range-track{height:10px;border-radius:99px;background:rgba(169,193,255,.38)}
+#ok-tool .ok-range::-moz-range-progress{height:10px;border-radius:99px;background:var(--yellow)}
+#ok-tool .ok-range::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--yellow);border:3px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.4)}
+#ok-tool .ok-range:disabled{cursor:not-allowed;opacity:.65}
+#ok-tool .ok-range:focus-visible{outline:3px solid var(--yellow);outline-offset:2px;border-radius:8px}
+#ok-tool .ok-range-scale{display:flex;justify-content:space-between;font-size:13px;color:rgba(255,255,255,.6);font-weight:700;width:100%}
+#ok-tool .ok-compare{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:stretch;max-width:760px;margin:34px auto 0}
+#ok-tool .ok-cmp-col{border-radius:14px;padding:16px 18px;text-align:center;border:1.5px solid rgba(120,170,255,.7);background:rgba(80,120,255,.12)}
+#ok-tool .ok-cmp-col.is-real{border-color:var(--yellow);background:rgba(245,197,24,.08)}
+#ok-tool .ok-cmp-col .ok-label{font-family:var(--f-title);font-weight:400;font-size:1.25rem;letter-spacing:.06em;margin-bottom:6px}
+#ok-tool .ok-cmp-col.is-real .ok-label{color:var(--yellow)}
+#ok-tool .ok-cmp-col p{font-size:16.5px}
+#ok-tool .ok-cmp-col b{font-weight:900;color:#fff}
+#ok-tool .ok-cmp-real{font-weight:800;font-size:18px!important}
+#ok-tool .ok-cmp-neq{display:grid;place-items:center;font-size:2rem;font-weight:900;color:var(--yellow)}
+#ok-tool .ok-cmp-sentence{text-align:center;font-size:18px;max-width:720px;margin:18px auto 0}
+#ok-tool .ok-cmp-sentence strong{color:var(--yellow);font-weight:900}
+#ok-tool .ok-bigbox{max-width:860px;margin:30px auto 0;border:2px solid var(--yellow);border-radius:18px;background:linear-gradient(160deg,#1A2A9E,#101C78);padding:22px 20px;text-align:center;
+  font-family:var(--f-title);font-size:clamp(1.7rem,4vw,2.6rem);line-height:1.05;letter-spacing:.02em;box-shadow:0 0 30px rgba(245,197,24,.18)}
+#ok-tool .ok-trap{max-width:860px;margin:14px auto 0;display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-left:5px solid var(--orange);border-radius:14px;padding:16px 18px;font-size:17px}
+#ok-tool .ok-trap .ok-ic{width:26px;height:26px;color:var(--orange);margin-top:1px}
+#ok-tool .ok-trap strong{color:#FFC27A;font-weight:900}
+
+/* ================= ÉTAPE 2 ================= */
+#ok-tool .ok-phone-stage{display:grid;place-items:center;min-height:380px}
+#ok-tool .ok-phone{width:min(300px,100%);background:var(--navy);border-radius:40px;padding:12px;box-shadow:0 24px 50px rgba(11,21,80,.3)}
+#ok-tool .ok-phone-screen{background:#F7F8FD;border-radius:30px;padding:16px 22px 30px;display:flex;flex-direction:column;align-items:center;text-align:center}
+#ok-tool .ok-phone-notch{width:72px;height:5px;border-radius:5px;background:#CDD3EA;margin-bottom:26px}
+#ok-tool .ok-phone-ic{width:84px;height:84px;border-radius:20px;background:#E6E9F5;border:1px solid #D3D8EC;display:grid;place-items:center;color:var(--navy)}
+#ok-tool .ok-phone-ic .ok-ic{width:38px;height:38px}
+#ok-tool .ok-phone-title{font-family:var(--f-title);font-size:1.9rem;letter-spacing:.08em;margin-top:18px;line-height:1}
+#ok-tool .ok-phone-txt{font-size:16px;color:#4C5584;margin-top:8px}
+#ok-tool .ok-send{margin-top:22px;width:76px;height:76px;border-radius:50%;border:0;background:var(--yellow);color:var(--navy);display:grid;place-items:center;
+  box-shadow:0 4px 0 var(--yellow-d),0 0 0 10px rgba(245,197,24,.18);animation:ok-halo 2s ease-in-out infinite;transition:transform .15s var(--ease)}
+#ok-tool .ok-send:hover{transform:translateY(-4px) scale(1.04)}
+#ok-tool .ok-send .ok-ic{width:32px;height:32px}
+#ok-tool .ok-s2-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,4vw,44px);align-items:start}
+#ok-tool .ok-chat{display:flex;flex-direction:column;gap:14px}
+#ok-tool .ok-msg{display:flex;gap:12px;align-items:flex-start}
+#ok-tool .ok-avatar{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;font-size:15px}
+#ok-tool .ok-av-orange{background:#E0662E}
+#ok-tool .ok-av-green{background:#2F8A6E}
+#ok-tool .ok-bub{background:#fff;border-radius:14px;padding:10px 16px 12px;box-shadow:0 4px 14px rgba(11,21,80,.12);border:1px solid #E1E5F2;max-width:100%}
+#ok-tool .ok-bub-name{font-size:12px;font-weight:900;letter-spacing:.16em;color:#6B7399;display:block;margin-bottom:2px}
+#ok-tool .ok-bub-txt{font-size:16.5px;font-weight:600;color:var(--navy)}
+#ok-tool .ok-typing{display:inline-flex;gap:5px;padding:6px 2px}
+#ok-tool .ok-typing i{width:8px;height:8px;border-radius:50%;background:#9AA3C7;animation:ok-dots 1s infinite ease-in-out}
+#ok-tool .ok-typing i:nth-child(2){animation-delay:.15s}
+#ok-tool .ok-typing i:nth-child(3){animation-delay:.3s}
+#ok-tool .ok-s2-q .ok-label{color:#6B7399;margin-bottom:8px}
+#ok-tool .ok-s2-q h3{font-family:var(--f-title);font-weight:400;font-size:clamp(1.8rem,3.4vw,2.4rem);line-height:1.08;letter-spacing:.01em;margin-bottom:18px;color:var(--navy)}
+#ok-tool .ok-s2-q h3 strong{background:var(--navy);color:var(--yellow);padding:0 .2em;border-radius:6px;font-weight:inherit;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+#ok-tool .ok-s2-q .ok-choice{border:2px solid #E1E5F2;box-shadow:0 3px 10px rgba(11,21,80,.08)}
+#ok-tool .ok-s2-q .ok-explain{margin-top:16px}
+
+/* ================= ÉTAPE 3 ================= */
+#ok-tool .ok-flow{position:relative;display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr 40px 1fr;align-items:stretch;margin-top:36px;transition:padding .4s var(--ease)}
+#ok-tool .ok-flow.has-loop{padding-bottom:96px}
+#ok-tool .ok-slot{display:flex;flex-direction:column;min-width:0}
+#ok-tool .ok-fcard{flex:1;min-height:230px;border-radius:16px;padding:18px 16px;border:2px dashed rgba(255,255,255,.22);background:transparent;position:relative;z-index:1}
+#ok-tool .ok-fcard.is-on{border-style:solid;border-color:var(--c);background:linear-gradient(170deg,color-mix(in srgb,var(--c) 22%,transparent),rgba(255,255,255,.04));background-color:rgba(20,30,120,.7)}
+#ok-tool .ok-fhead{display:flex;gap:8px;align-items:center;margin-bottom:14px}
+#ok-tool .ok-fnum{width:38px;height:38px;border-radius:10px;background:var(--c);color:var(--navy);display:grid;place-items:center;font-family:var(--f-title);font-size:1.35rem;line-height:1}
+#ok-tool .ok-fic{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.12);color:var(--c);display:grid;place-items:center}
+#ok-tool .ok-fcard h3{font-family:var(--f-title);font-weight:400;font-size:1.45rem;line-height:1.05;letter-spacing:.02em;margin-bottom:8px}
+#ok-tool .ok-fcard p{font-size:16px;color:rgba(255,255,255,.92);line-height:1.45}
+#ok-tool .ok-fcard p strong{color:#fff;font-weight:900}
+#ok-tool .ok-fcard.ok-flash{animation:ok-flash .6s var(--ease)}
+#ok-tool .ok-slot-act{min-height:76px;display:flex;justify-content:center;align-items:flex-start;padding-top:14px;position:relative;z-index:2}
+#ok-tool .ok-slot-act .ok-cta{padding:12px 16px;font-size:14.5px;min-height:48px}
+#ok-tool .ok-farrow{display:flex;align-items:flex-start;justify-content:center;padding-top:100px}
+#ok-tool .ok-farrow svg{width:36px;height:24px;overflow:visible}
+#ok-tool .ok-farrow path{fill:none;stroke:rgba(255,255,255,.7);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+#ok-tool .ok-farrow .ok-fl{stroke-dasharray:30;stroke-dashoffset:30}
+#ok-tool .ok-farrow .ok-fh{opacity:0}
+#ok-tool .ok-farrow.is-on .ok-fl{stroke-dashoffset:0;transition:stroke-dashoffset .6s var(--ease)}
+#ok-tool .ok-farrow.is-on .ok-fh{opacity:1;transition:opacity .25s .5s}
+#ok-tool .ok-loopbtn{display:flex;flex-direction:column;align-items:center;gap:6px;background:transparent;border:0;padding:0;color:var(--yellow);font-weight:900;font-size:15px}
+#ok-tool .ok-loopbtn span.ok-round{width:52px;height:52px;border-radius:50%;background:var(--yellow);color:var(--navy);display:grid;place-items:center;box-shadow:0 4px 0 var(--yellow-d),0 0 0 8px rgba(245,197,24,.16);animation:ok-halo 2s ease-in-out infinite;transition:transform .15s var(--ease)}
+#ok-tool .ok-loopbtn:hover span.ok-round{transform:translateY(-4px) rotate(-40deg)}
+#ok-tool .ok-loopbtn .ok-ic{width:26px;height:26px}
+#ok-tool .ok-loop-svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0}
+#ok-tool .ok-loop-svg path{fill:none;stroke:var(--yellow);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px rgba(245,197,24,.5))}
+#ok-tool .ok-loop-label{position:absolute;z-index:3;transform:translate(-50%,-50%);background:var(--yellow);color:var(--navy);font-weight:900;font-size:14px;letter-spacing:.12em;padding:7px 14px;border-radius:999px;white-space:nowrap;box-shadow:0 6px 16px rgba(0,0,0,.3)}
+#ok-tool .ok-loop-label.is-vert{transform:translate(-50%,-50%) rotate(-90deg)}
+#ok-tool .ok-s3-after{max-width:860px;margin:10px auto 0}
+#ok-tool .ok-s3-after>*+*{margin-top:18px}
+
+/* ================= ÉTAPE 4 ================= */
+#ok-tool .ok-triframe{position:relative;max-width:900px;margin:30px auto 0;border-radius:18px;background:linear-gradient(170deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.16);overflow:hidden}
+#ok-tool .ok-tri{width:100%;height:auto}
+#ok-tool .ok-tri text{font-family:var(--f-text);fill:#fff}
+#ok-tool .ok-tri .ok-tt{font-family:var(--f-title);letter-spacing:.06em}
+#ok-tool .ok-tri .ok-smoke-g{transition:transform .8s var(--ease),opacity .8s var(--ease)}
+#ok-tool .ok-tri .ok-smoke-w{animation:ok-wobble 6s ease-in-out infinite alternate}
+#ok-tool .ok-tri .ok-smoke-w.w2{animation-duration:7.5s;animation-direction:alternate-reverse}
+#ok-tool .ok-tri.is-p1 .ok-smoke-l{transform:translate(-320px,-60px);opacity:0}
+#ok-tool .ok-tri.is-p1 .ok-smoke-r{transform:translate(320px,-60px);opacity:0}
+#ok-tool .ok-tri.is-p1 .ok-smoke-c{transform:translateY(-240px);opacity:0}
+#ok-tool .ok-tri .ok-buee{opacity:0;transform:translate(var(--bx),var(--by));transition:transform .9s .25s var(--ease),opacity .4s .25s}
+#ok-tool .ok-tri.is-p1 .ok-buee{opacity:1;transform:translate(0px,0px)}
+#ok-tool .ok-tri .ok-qmark{transition:filter .5s .9s}
+#ok-tool .ok-tri.is-p1 .ok-qmark{filter:blur(3.5px)}
+#ok-tool .ok-tri .ok-autre{opacity:0;transform:scale(.5);transform-box:fill-box;transform-origin:center;transition:transform .5s var(--ease),opacity .4s}
+#ok-tool .ok-tri.is-p2 .ok-autre{opacity:1;transform:none}
+#ok-tool .ok-tri .ok-mk{fill:none;stroke:#fff;stroke-linecap:round;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset .6s var(--ease)}
+#ok-tool .ok-tri.is-p3 .ok-mk-want,#ok-tool .ok-tri.is-p4 .ok-mk-look{stroke-dashoffset:0}
+#ok-tool .ok-tri .ok-x-want,#ok-tool .ok-tri .ok-x-look{opacity:0;transition:opacity .35s .5s}
+#ok-tool .ok-tri.is-p3 .ok-x-want,#ok-tool .ok-tri.is-p4 .ok-x-look{opacity:1}
+#ok-tool .ok-tri .ok-q-txt{transition:opacity .5s}
+#ok-tool .ok-tri .ok-a-txt{opacity:0;transition:opacity .5s .3s}
+#ok-tool .ok-tri.is-p5 .ok-q-txt{opacity:0}
+#ok-tool .ok-tri.is-p5 .ok-a-txt{opacity:1}
+#ok-tool .ok-tri .ok-tri-label{opacity:0;transition:opacity .5s}
+#ok-tool .ok-tri.is-p6 .ok-tri-label{opacity:1}
+#ok-tool .ok-tri.ok-noanim *{transition:none!important}
+#ok-tool .ok-smoke-btn{position:absolute;left:50%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:12px 22px;border:0;border-radius:14px;
+  background:var(--yellow);color:var(--navy);font-weight:900;font-size:16px;letter-spacing:.05em;box-shadow:0 4px 0 var(--yellow-d),0 0 0 8px rgba(245,197,24,.18),0 10px 30px rgba(0,0,0,.3);z-index:2;white-space:nowrap;transition:transform .15s var(--ease)}
+#ok-tool .ok-smoke-btn:hover{transform:translate(-50%,calc(-50% - 4px)) scale(1.04)}
+#ok-tool .ok-smoke-btn .ok-ic{width:22px;height:22px}
+#ok-tool .ok-idea{max-width:860px;margin:30px auto 0;background:rgba(255,255,255,.06);border:1.5px solid var(--yellow);border-left-width:6px;border-radius:18px;padding:22px 26px}
+#ok-tool .ok-idea-head{display:flex;align-items:center;gap:10px;color:var(--yellow);margin-bottom:10px}
+#ok-tool .ok-idea-head span.ok-sq{width:34px;height:34px;border-radius:9px;background:var(--yellow);color:var(--navy);display:grid;place-items:center}
+#ok-tool .ok-idea-txt{font-size:18px;line-height:1.55}
+#ok-tool .ok-idea-txt strong{color:var(--yellow);font-weight:900}
+#ok-tool .ok-idea hr{border:0;border-top:1px solid rgba(255,255,255,.15);margin:18px 0}
+#ok-tool .ok-retain{font-family:var(--f-title);font-size:clamp(1.6rem,3.4vw,2.3rem);line-height:1.12;letter-spacing:.01em;margin-top:6px}
+#ok-tool .ok-retain strong{background:var(--yellow);color:var(--navy);padding:0 .22em;border-radius:6px;font-weight:inherit;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+
+/* ================= ÉTAPE 5 ================= */
+#ok-tool .ok-desire{display:flex;justify-content:center;margin-top:24px}
+#ok-tool .ok-desire span{display:inline-flex;align-items:center;gap:10px;border:2px solid var(--yellow);border-radius:999px;padding:9px 22px 7px;font-family:var(--f-title);font-size:1.5rem;letter-spacing:.06em;color:#fff;background:rgba(245,197,24,.08);box-shadow:0 0 22px rgba(245,197,24,.18)}
+#ok-tool .ok-desire .ok-ic{color:var(--yellow);width:22px;height:22px}
+#ok-tool .ok-badges{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;max-width:900px;margin:18px auto 0}
+#ok-tool .ok-badge{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;border:1.5px solid color-mix(in srgb,var(--c) 45%,transparent);background:color-mix(in srgb,var(--c) 6%,transparent);
+  font-family:var(--f-title);font-size:1.15rem;letter-spacing:.05em;color:rgba(255,255,255,.55);transition:all .4s var(--ease)}
+#ok-tool .ok-badge .ok-bic{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 15%,transparent);color:color-mix(in srgb,var(--c) 70%,#fff)}
+#ok-tool .ok-badge.is-lit{border-color:var(--c);background:color-mix(in srgb,var(--c) 22%,transparent);color:#fff;box-shadow:0 0 18px color-mix(in srgb,var(--c) 45%,transparent)}
+#ok-tool .ok-badge.is-lit .ok-bic{background:var(--c);color:var(--navy)}
+#ok-tool .ok-minibar{display:flex;align-items:center;gap:14px;max-width:820px;margin:28px auto 0}
+#ok-tool .ok-minibar .ok-label{color:rgba(255,255,255,.75);white-space:nowrap}
+#ok-tool .ok-mb-track{flex:1;height:6px;border-radius:6px;background:rgba(255,255,255,.14);overflow:hidden}
+#ok-tool .ok-mb-fill{height:100%;width:0;background:var(--yellow);border-radius:6px;transition:width .6s var(--ease)}
+#ok-tool .ok-mb-score{font-weight:900;color:var(--yellow);font-size:15px;min-width:44px;text-align:right;display:inline-block}
+#ok-tool .ok-round{max-width:820px;margin:14px auto 0}
+#ok-tool .ok-situation{background:#fff;color:var(--navy);border-radius:16px;padding:18px 22px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#ok-tool .ok-sit-head{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px}
+#ok-tool .ok-sit-head span.ok-sq{width:30px;height:30px;border-radius:8px;background:var(--navy);color:#fff;display:grid;place-items:center}
+#ok-tool .ok-sit-head .ok-ic{width:17px;height:17px}
+#ok-tool .ok-sit-text{font-family:var(--f-title);font-size:clamp(1.45rem,2.8vw,1.95rem);line-height:1.12;letter-spacing:.01em;margin-top:10px;text-transform:uppercase}
+#ok-tool .ok-ask{text-align:center;font-weight:700;margin:22px 0 12px}
+#ok-tool .ok-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+#ok-tool .ok-pill{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:10px 18px;border-radius:999px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.07);color:#fff;font-weight:800;font-size:16px}
+#ok-tool .ok-pill .ok-ic{width:18px;height:18px;color:var(--c)}
+#ok-tool .ok-pill:not(:disabled):hover{transform:translateY(-4px);background:rgba(255,255,255,.13);box-shadow:0 10px 22px rgba(0,0,0,.25)}
+#ok-tool .ok-pill.is-correct{background:var(--green);border-color:var(--green-l);box-shadow:0 0 0 3px rgba(91,224,143,.3),0 0 20px rgba(91,224,143,.4)}
+#ok-tool .ok-pill.is-wrong{background:var(--red);border-color:var(--red-l)}
+#ok-tool .ok-pill.is-correct .ok-ic,#ok-tool .ok-pill.is-wrong .ok-ic{color:#fff}
+#ok-tool .ok-pill .ok-mark{width:22px;height:22px;background:rgba(255,255,255,.25)}
+#ok-tool .ok-pill .ok-mark:empty{display:none}
+#ok-tool .ok-s5-fb{margin-top:20px}
+#ok-tool .ok-s5-fb .ok-verdict-h{font-size:1.3rem}
+#ok-tool .ok-endhead{text-align:center;margin-top:36px}
+#ok-tool .ok-endsq{width:78px;height:78px;margin:0 auto;border-radius:18px;background:var(--yellow);color:var(--navy);display:grid;place-items:center;box-shadow:0 0 30px rgba(245,197,24,.4)}
+#ok-tool .ok-endsq .ok-ic{width:36px;height:36px}
+#ok-tool .ok-endsq.ok-pop-in{animation:ok-popin .6s var(--ease) both}
+#ok-tool .ok-endhead .ok-label{color:var(--yellow);margin-top:16px}
+#ok-tool .ok-endtitle{font-family:var(--f-title);font-size:clamp(2rem,5vw,3.2rem);line-height:1.04;margin-top:6px}
+#ok-tool .ok-endscore{margin-top:8px;font-size:17px}
+#ok-tool .ok-endscore strong{color:var(--yellow);font-weight:900}
+#ok-tool .ok-grid-title{font-family:var(--f-title);font-size:clamp(1.6rem,3.4vw,2.2rem);letter-spacing:.03em;margin-top:4px}
+#ok-tool .ok-icards{display:flex;flex-direction:column;gap:14px;max-width:620px;margin:20px auto 0}
+#ok-tool .ok-icard{display:flex;align-items:center;gap:16px;background:var(--c);color:var(--navy);border-radius:16px;padding:16px 20px;box-shadow:0 0 22px color-mix(in srgb,var(--c) 40%,transparent)}
+#ok-tool .ok-icard .ok-bic{width:42px;height:42px;border-radius:10px;background:rgba(11,21,80,.14);display:grid;place-items:center;flex:none}
+#ok-tool .ok-icard h4{margin:0;font-family:var(--f-title);font-weight:400;font-size:1.5rem;letter-spacing:.03em;line-height:1.05}
+#ok-tool .ok-icard p{font-weight:800;font-size:16px}
+
+/* ================= ÉTAPE 6 ================= */
+#ok-tool .ok-s6-bar{max-width:760px;height:6px;border-radius:6px;background:rgba(255,255,255,.14);margin:16px auto 0;overflow:hidden}
+#ok-tool .ok-s6-bar div{height:100%;background:var(--yellow);border-radius:6px;transition:width .6s var(--ease)}
+#ok-tool .ok-case-wrap{max-width:760px;margin:22px auto 0}
+#ok-tool .ok-case{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:clamp(16px,3vw,26px)}
+#ok-tool .ok-case-head{display:flex;align-items:center;gap:12px}
+#ok-tool .ok-sq-y{width:44px;height:44px;border-radius:12px;background:var(--yellow);color:var(--navy);display:grid;place-items:center;flex:none}
+#ok-tool .ok-sq-y .ok-ic{width:22px;height:22px}
+#ok-tool .ok-case-title{font-family:var(--f-title);font-weight:400;font-size:clamp(2rem,4.4vw,2.8rem);letter-spacing:.02em;line-height:1;margin-top:14px}
+#ok-tool .ok-case-ctx{margin-top:16px;border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:16px 18px;background:rgba(255,255,255,.04)}
+#ok-tool .ok-case-ctx p{font-size:17px}
+#ok-tool .ok-case-ctx strong{font-weight:900}
+#ok-tool .ok-case-ctx hr{border:0;border-top:1px solid rgba(255,255,255,.15);margin:14px 0}
+#ok-tool .ok-case-q{font-family:var(--f-title);font-size:clamp(1.35rem,2.6vw,1.75rem)!important;letter-spacing:.03em;text-align:center;line-height:1.12}
+#ok-tool .ok-case-video{margin:20px 0 18px;text-align:center}
+#ok-tool .ok-vid-title{font-weight:900;font-size:17px}
+#ok-tool .ok-observe{display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;color:rgba(255,255,255,.9);margin:4px 0 14px;flex-wrap:wrap}
+#ok-tool .ok-observe .ok-ic{color:var(--yellow)}
+#ok-tool .ok-observe strong{color:var(--yellow);font-weight:900}
+#ok-tool .ok-case-fb>*+*{margin-top:14px}
+#ok-tool .ok-case-fb{margin-top:16px}
+#ok-tool .ok-capsule{display:flex;align-items:center;gap:12px;border:2px solid var(--yellow);border-radius:999px;padding:14px 24px;color:var(--yellow);font-weight:900;font-size:17px;line-height:1.35;background:rgba(245,197,24,.06)}
+#ok-tool .ok-capsule .ok-ic{width:22px;height:22px}
+
+/* ================= VIDÉO (FAÇADE) ================= */
+#ok-tool .ok-video{position:relative;margin:0 auto;border-radius:16px;overflow:hidden;background:linear-gradient(160deg,#2236B8,#0B1550);box-shadow:0 10px 30px rgba(0,0,0,.35);aspect-ratio:16/9;width:100%}
+#ok-tool .ok-video.is-vertical{aspect-ratio:9/16;max-width:300px}
+#ok-tool .ok-facade{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;background:transparent;display:block}
+#ok-tool .ok-facade img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s var(--ease)}
+#ok-tool .ok-facade.is-fail img{display:none}
+#ok-tool .ok-facade:hover img{transform:scale(1.04)}
+#ok-tool .ok-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,10,50,.15),rgba(6,10,50,.7))}
+#ok-tool .ok-playbtn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:50%;background:var(--yellow);color:var(--navy);display:grid;place-items:center;box-shadow:0 0 0 10px rgba(245,197,24,.25),0 10px 26px rgba(0,0,0,.4);transition:transform .2s var(--ease)}
+#ok-tool .ok-facade:hover .ok-playbtn{transform:translate(-50%,-50%) scale(1.08)}
+#ok-tool .ok-playbtn .ok-ic{width:30px;height:30px;margin-left:4px}
+#ok-tool .ok-facade-title{position:absolute;left:12px;right:12px;bottom:14px;color:#fff;font-weight:800;font-size:15px;line-height:1.3;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+#ok-tool .ok-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#ok-tool .ok-yt-link{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-top:6px;font-weight:800;font-size:15px;color:var(--yellow);text-decoration:underline;text-underline-offset:3px}
+#ok-tool.ok-is-light .ok-yt-link{color:var(--navy)}
+
+/* ================= ÉTAPE 7 ================= */
+#ok-tool .ok-words{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+#ok-tool .ok-word{border-radius:16px;padding:20px;border:1.5px solid var(--c);background:color-mix(in srgb,var(--c) 10%,rgba(255,255,255,.04))}
+#ok-tool .ok-word-h{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+#ok-tool .ok-word-h span.ok-sq{width:40px;height:40px;border-radius:10px;background:color-mix(in srgb,var(--c) 25%,transparent);color:var(--c);display:grid;place-items:center;flex:none}
+#ok-tool .ok-word h3{font-family:var(--f-title);font-weight:400;font-size:1.5rem;letter-spacing:.03em;line-height:1.05}
+#ok-tool .ok-word p{font-size:16.5px}
+#ok-tool .ok-word strong{color:var(--yellow);font-weight:900}
+#ok-tool .ok-quiz{display:grid;grid-template-columns:64px 1fr;gap:clamp(14px,3vw,32px);max-width:920px;margin:28px auto 0}
+#ok-tool .ok-xp{display:flex;flex-direction:column;align-items:center;gap:8px}
+#ok-tool .ok-xp-lbl{font-family:var(--f-title);font-size:1.2rem;letter-spacing:.12em;color:var(--yellow)}
+#ok-tool .ok-xp-track{width:16px;height:280px;border-radius:12px;background:rgba(255,255,255,.12);position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.15)}
+#ok-tool .ok-xp-fill{position:absolute;inset:0;background:linear-gradient(0deg,var(--yellow),#FFE07A);transform-origin:bottom;transform:scaleY(0);transition:transform .6s var(--ease)}
+#ok-tool .ok-xp-val{font-family:var(--f-title);font-size:1.9rem;color:var(--yellow);line-height:1}
+#ok-tool .ok-xp-flame{color:#FF9B45;display:flex;align-items:center;gap:3px;font-weight:800;font-size:14px}
+#ok-tool .ok-xp-flame .ok-ic{width:18px;height:18px}
+#ok-tool .ok-qnum{color:rgba(255,255,255,.75);margin-bottom:12px}
+#ok-tool .ok-qnum span{color:var(--yellow)}
+#ok-tool .ok-qrow{display:flex;gap:14px;align-items:flex-start;margin-bottom:18px}
+#ok-tool .ok-qcube{flex:none;width:58px;height:58px;border-radius:14px;background:#fff;display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+#ok-tool .ok-qcube svg{width:42px;height:42px}
+#ok-tool .ok-qbubble{position:relative;flex:1;background:#fff;color:var(--navy);border-radius:18px;padding:16px 20px;font-family:var(--f-title);font-size:clamp(1.3rem,2.5vw,1.7rem);line-height:1.15;letter-spacing:.01em;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#ok-tool .ok-qbubble::before{content:"";position:absolute;left:-9px;top:20px;border:9px solid transparent;border-right-color:#fff;border-left:0}
+#ok-tool .ok-q-fbrow{display:grid;grid-template-columns:1fr auto;gap:14px;margin-top:16px;align-items:stretch}
+#ok-tool .ok-qfb{border-radius:16px;padding:16px 18px;font-size:16.5px;line-height:1.5;background:rgba(255,255,255,.05)}
+#ok-tool .ok-qfb.is-ok{border:2px solid var(--green-l)}
+#ok-tool .ok-qfb.is-ko{border:2px solid var(--red-l)}
+#ok-tool .ok-qfb h4{margin:0 0 4px;font-family:var(--f-title);font-weight:400;font-size:1.4rem;letter-spacing:.04em;display:flex;align-items:center;gap:8px}
+#ok-tool .ok-qfb.is-ok h4{color:var(--green-l)}
+#ok-tool .ok-qfb.is-ko h4{color:var(--red-l)}
+#ok-tool .ok-qfb strong{font-weight:900;text-transform:uppercase;font-size:.95em}
+#ok-tool .ok-qnext{min-width:130px;border:0;border-radius:16px;background:var(--yellow);color:var(--navy);font-family:var(--f-title);font-size:1.35rem;letter-spacing:.05em;padding:14px 16px;line-height:1.1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;box-shadow:0 4px 0 var(--yellow-d),0 10px 24px rgba(0,0,0,.25);transition:transform .15s var(--ease),box-shadow .15s}
+#ok-tool .ok-qnext:hover{transform:scale(1.04);box-shadow:0 4px 0 var(--yellow-d),0 0 30px rgba(245,197,24,.5)}
+#ok-tool .ok-bravo{text-align:center;padding-top:10px}
+#ok-tool .ok-trophy{width:96px;height:96px;margin:0 auto;border-radius:22px;background:var(--yellow);color:var(--navy);display:grid;place-items:center;box-shadow:0 0 40px rgba(245,197,24,.45)}
+#ok-tool .ok-trophy .ok-ic{width:46px;height:46px}
+#ok-tool .ok-bravo-t{font-family:var(--f-title);font-size:clamp(4.2rem,12vw,7rem);line-height:.95;margin-top:18px}
+#ok-tool .ok-bravo-t strong{color:var(--yellow);font-weight:inherit}
+#ok-tool .ok-unlock{font-weight:800;letter-spacing:.08em;font-size:17px;margin-top:6px;color:rgba(255,255,255,.9)}
+#ok-tool .ok-level{font-family:var(--f-title);font-size:clamp(2.2rem,6vw,3.4rem);color:var(--yellow);line-height:1;text-shadow:0 0 24px rgba(245,197,24,.4)}
+#ok-tool .ok-stats{display:inline-grid;grid-template-columns:repeat(3,auto);margin-top:28px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);border-radius:16px;overflow:hidden}
+#ok-tool .ok-stat{padding:14px 26px;text-align:center}
+#ok-tool .ok-stat+.ok-stat{border-left:1px solid rgba(255,255,255,.14)}
+#ok-tool .ok-stat b{display:block;font-family:var(--f-title);font-weight:400;font-size:2.6rem;line-height:1;color:var(--yellow)}
+#ok-tool .ok-stat b small{font-size:.45em;color:#fff;margin-left:2px;letter-spacing:.05em}
+#ok-tool .ok-stat:nth-child(2) b{color:#fff}
+#ok-tool .ok-stat:nth-child(3) b{color:var(--green-l)}
+#ok-tool .ok-stat>span{font-size:12.5px;font-weight:900;letter-spacing:.16em;color:rgba(255,255,255,.7)}
+
+/* ================= ÉTAPE 8 (FOND CLAIR) ================= */
+#ok-tool.ok-is-light{background:var(--light)}
+#ok-tool.ok-is-light .ok-main{color:var(--navy)}
+#ok-tool .ok-tri.is-p2 .ok-smoke-all{display:none}
+#ok-tool .ok-s8-kicker{display:flex;align-items:center;justify-content:center;gap:12px;color:#5A6390}
+#ok-tool .ok-s8-kicker::before,#ok-tool .ok-s8-kicker::after{content:"";width:28px;height:1.5px;background:#9AA2C6}
+#ok-tool .ok-s8-title{font-family:var(--f-title);font-weight:400;font-size:clamp(2.6rem,6vw,4rem);color:var(--navy);text-align:center;line-height:1;margin-top:10px;letter-spacing:.02em}
+#ok-tool .ok-s8-sub{text-align:center;color:#3E4775;margin-top:12px;font-size:17px}
+#ok-tool .ok-s8-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:34px;align-items:start}
+#ok-tool .ok-s8-card{background:#fff;border-radius:22px;padding:clamp(18px,3vw,28px);box-shadow:0 10px 30px rgba(11,21,80,.1);border:1px solid #E1E5F2;color:var(--navy)}
+#ok-tool .ok-cover-wrap{display:flex;justify-content:center;padding:10px 0 20px}
+#ok-tool .ok-cover{width:min(190px,60%);height:auto;transform:rotate(-4deg);filter:drop-shadow(0 16px 22px rgba(11,21,80,.35));transition:transform .3s var(--ease)}
+#ok-tool .ok-s8-card:hover .ok-cover{transform:rotate(-1deg) translateY(-4px)}
+#ok-tool .ok-chip{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;background:#E9ECF8;color:var(--navy)}
+#ok-tool .ok-chip.is-navy{background:var(--navy);color:#fff}
+#ok-tool .ok-chip.is-cream{background:var(--cream);color:#6B5200}
+#ok-tool .ok-chip .ok-ic{width:15px;height:15px}
+#ok-tool .ok-s8-h{font-family:var(--f-title);font-weight:400;font-size:clamp(1.9rem,3.6vw,2.5rem);line-height:1;color:var(--navy);margin-top:14px;letter-spacing:.02em}
+#ok-tool .ok-s8-meta{font-size:15px;color:#5A6390;margin-top:6px;font-weight:700}
+#ok-tool .ok-hook{font-family:var(--f-title);font-size:clamp(1.35rem,2.6vw,1.65rem);line-height:1.15;margin-top:16px;color:var(--navy);letter-spacing:.01em}
+#ok-tool .ok-hook strong{background:#FCE9A6;padding:0 .18em;font-weight:inherit;border-radius:4px}
+#ok-tool .ok-s8-p{font-size:16.5px;line-height:1.6;color:#2A3366;margin-top:12px}
+#ok-tool .ok-s8-p strong{color:var(--navy);font-weight:900}
+#ok-tool .ok-s8-p b{font-weight:900;color:var(--navy)}
+#ok-tool .ok-btn-navy{display:inline-flex;align-items:center;gap:8px;min-height:48px;margin-top:18px;padding:12px 22px;border-radius:999px;background:var(--navy);color:#fff!important;text-decoration:none;font-weight:900;font-size:15px;letter-spacing:.08em;transition:transform .15s var(--ease),box-shadow .15s}
+#ok-tool .ok-btn-navy:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(11,21,80,.3)}
+#ok-tool .ok-btn-navy .ok-ic{width:18px;height:18px}
+#ok-tool .ok-mission-box{margin-top:14px;background:var(--light);border-radius:14px;padding:12px 16px}
+#ok-tool .ok-mission-box p{margin-top:6px;font-size:16.5px;color:#2A3366}
+#ok-tool .ok-mission-box strong{font-weight:900;color:var(--navy)}
+#ok-tool .ok-s8-card .ok-video{margin-top:18px}
+#ok-tool .ok-s8-card .ok-yt-wrap{text-align:center}
+#ok-tool .ok-replay{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:12px 30px;border-radius:14px;background:transparent;border:2px solid var(--navy);color:var(--navy);font-weight:900;font-size:16px;letter-spacing:.08em;transition:transform .15s var(--ease),background .2s,color .2s}
+#ok-tool .ok-replay:hover{background:var(--navy);color:#fff;transform:scale(1.04)}
+#ok-tool .ok-replay .ok-ic{width:20px;height:20px}
+
+/* ================= MODALE ================= */
+#ok-tool .ok-modal{position:fixed;inset:0;z-index:100;background:rgba(5,9,40,.72);display:grid;place-items:center;padding:16px;animation:ok-fade-in .2s both}
+#ok-tool .ok-modal-card{background:#fff;color:var(--navy);border-radius:20px;padding:28px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.45);animation:ok-in .3s var(--ease) both}
+#ok-tool .ok-modal-card h2{font-family:var(--f-title);font-weight:400;font-size:2.3rem;line-height:1;letter-spacing:.02em}
+#ok-tool .ok-modal-card p{margin-top:10px;color:#3E4775}
+#ok-tool .ok-modal-actions{display:flex;gap:12px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+#ok-tool .ok-modal-actions button{min-width:130px;min-height:48px;border-radius:12px;font-weight:900;letter-spacing:.05em;font-size:15px;text-transform:uppercase;transition:transform .15s var(--ease)}
+#ok-tool .ok-modal-actions button:hover{transform:translateY(-3px)}
+#ok-tool .ok-btn-stay{background:var(--yellow);color:var(--navy);border:0;box-shadow:0 4px 0 var(--yellow-d)}
+#ok-tool .ok-btn-quit{background:#fff;color:var(--navy);border:2px solid var(--navy)}
+
+/* ================= KEYFRAMES ================= */
+@keyframes ok-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes ok-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes ok-fade-out{to{opacity:0;transform:translateY(-6px)}}
+@keyframes ok-cta-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes ok-glow{0%,100%{box-shadow:0 4px 0 var(--yellow-d),0 0 0 0 rgba(245,197,24,.0)}50%{box-shadow:0 4px 0 var(--yellow-d),0 0 0 10px rgba(245,197,24,.28),0 0 34px rgba(245,197,24,.6)}}
+@keyframes ok-pulse{0%{transform:scale(1)}35%{transform:scale(.97)}70%{transform:scale(1.03)}100%{transform:scale(1)}}
+@keyframes ok-bounce{0%{transform:scale(1)}40%{transform:scale(1.04) translateY(-3px)}100%{transform:none}}
+@keyframes ok-shake{0%,100%{transform:none}20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+@keyframes ok-draw{to{stroke-dashoffset:0}}
+@keyframes ok-out-left{to{opacity:0;transform:translateX(-40px)}}
+@keyframes ok-out-right{to{opacity:0;transform:translateX(40px)}}
+@keyframes ok-in-right{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+@keyframes ok-in-left{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}
+@keyframes ok-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes ok-jump{0%{transform:none}30%{transform:translateY(-12px) scale(1.06)}60%{transform:translateY(0) scale(.96)}100%{transform:none}}
+@keyframes ok-drift{0%{transform:translate(0,0)}50%{transform:translate(30px,-60px)}100%{transform:translate(0,0)}}
+@keyframes ok-dots{0%,80%,100%{transform:translateY(0);opacity:.45}40%{transform:translateY(-4px);opacity:1}}
+@keyframes ok-halo{0%,100%{box-shadow:0 4px 0 var(--yellow-d),0 0 0 6px rgba(245,197,24,.2)}50%{box-shadow:0 4px 0 var(--yellow-d),0 0 0 14px rgba(245,197,24,.08)}}
+@keyframes ok-tick{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes ok-flash{0%{transform:none}40%{transform:translateY(-8px) scale(1.04);box-shadow:0 0 0 4px var(--yellow),0 0 30px rgba(245,197,24,.5)}100%{transform:none}}
+@keyframes ok-pop{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes ok-popin{0%{opacity:0;transform:scale(.4)}60%{opacity:1;transform:scale(1.12)}100%{transform:none}}
+@keyframes ok-wobble{from{transform:translateX(-10px)}to{transform:translateX(10px)}}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width:900px){
+  #ok-tool .ok-tag-long{display:none}
+  #ok-tool .ok-tag-short{display:inline}
+}
+@media (max-width:759px){
+  #ok-tool{font-size:16px}
+  #ok-tool .ok-shoes,#ok-tool .ok-s2-grid,#ok-tool .ok-quotes2,#ok-tool .ok-words,#ok-tool .ok-s8-grid{grid-template-columns:1fr}
+  #ok-tool .ok-compare{grid-template-columns:1fr}
+  #ok-tool .ok-cmp-neq{transform:rotate(90deg);font-size:1.6rem}
+  #ok-tool .ok-flow{grid-template-columns:1fr;padding-right:58px}
+  #ok-tool .ok-flow.has-loop{padding-bottom:0}
+  #ok-tool .ok-fcard{min-height:0}
+  #ok-tool .ok-fcard.is-empty{min-height:150px}
+  #ok-tool .ok-slot-act{min-height:0;padding:10px 0 0}
+  #ok-tool .ok-slot-act:empty{padding:0}
+  #ok-tool .ok-farrow{padding:8px 0;height:56px;align-items:center}
+  #ok-tool .ok-farrow svg{transform:rotate(90deg)}
+  #ok-tool .ok-quiz{grid-template-columns:44px 1fr}
+  #ok-tool .ok-xp-track{height:220px;width:14px}
+  #ok-tool .ok-q-fbrow{grid-template-columns:1fr}
+  #ok-tool .ok-qnext{flex-direction:row;min-height:52px}
+  #ok-tool .ok-qcube{width:46px;height:46px}
+  #ok-tool .ok-qcube svg{width:34px;height:34px}
+  #ok-tool .ok-stat{padding:12px 16px}
+  #ok-tool .ok-stat b{font-size:2.1rem}
+  #ok-tool .ok-back{left:14px;bottom:14px;width:50px;height:50px}
+  #ok-tool .ok-dock{right:12px;bottom:12px}
+  #ok-tool .ok-mascot{width:58px;height:58px}
+  #ok-tool .ok-mascot svg{width:40px;height:40px}
+  #ok-tool .ok-capsule{border-radius:22px}
+}
+@media (max-width:600px){
+  #ok-tool{--top-h:104px}
+  #ok-tool .ok-top{flex-wrap:wrap;padding:6px 12px 8px;gap:4px 10px}
+  #ok-tool .ok-nav{flex:1 0 calc(100% - 60px)}
+  #ok-tool .ok-tag{order:3;margin:0 auto;font-size:13px;padding:6px 12px 5px}
+  #ok-tool .ok-dot{width:26px;height:26px;font-size:12px}
+  #ok-tool .ok-dot.is-current{width:30px;height:30px;box-shadow:0 0 0 4px rgba(245,197,24,.22),0 0 14px rgba(245,197,24,.5)}
+  #ok-tool .ok-progress li+li::before{margin:0 2px}
+  #ok-tool .ok-dot::after{inset:-9px -4px}
+  #ok-tool .ok-close{width:40px;height:44px}
+  #ok-tool .ok-cta{padding:13px 20px;font-size:15px}
+  #ok-tool .ok-pill{padding:9px 14px;font-size:15.5px}
+  #ok-tool .ok-panel{border-radius:18px}
+}
+@media (prefers-reduced-motion:reduce){
+  @keyframes ok-in{from{opacity:0}to{opacity:1}}
+  @keyframes ok-cta-in{from{opacity:0}to{opacity:1}}
+  @keyframes ok-out-left{to{opacity:0}}
+  @keyframes ok-out-right{to{opacity:0}}
+  @keyframes ok-in-right{from{opacity:0}to{opacity:1}}
+  @keyframes ok-in-left{from{opacity:0}to{opacity:1}}
+  @keyframes ok-shake{from{opacity:.6}to{opacity:1}}
+  @keyframes ok-bounce{from{opacity:.6}to{opacity:1}}
+  @keyframes ok-pulse{from{opacity:.7}to{opacity:1}}
+  @keyframes ok-float{from{opacity:1}to{opacity:1}}
+  @keyframes ok-drift{from{opacity:.18}to{opacity:.18}}
+  @keyframes ok-jump{from{opacity:.6}to{opacity:1}}
+  @keyframes ok-wobble{from{opacity:1}to{opacity:1}}
+  @keyframes ok-flash{from{opacity:.6}to{opacity:1}}
+  @keyframes ok-popin{from{opacity:0}to{opacity:1}}
+  @keyframes ok-pop{from{opacity:.6}to{opacity:1}}
+  @keyframes ok-tick{from{opacity:.6}to{opacity:1}}
+  #ok-tool .ok-choice:not(:disabled):hover,#ok-tool .ok-pill:not(:disabled):hover,#ok-tool .ok-cta:not(:disabled):hover{transform:none}
+  #ok-tool .ok-tri .ok-smoke-g,#ok-tool .ok-tri .ok-buee,#ok-tool .ok-tri .ok-autre{transition:opacity .6s!important}
+  #ok-tool .ok-tri.is-p1 .ok-smoke-l,#ok-tool .ok-tri.is-p1 .ok-smoke-r,#ok-tool .ok-tri.is-p1 .ok-smoke-c{transform:none}
+  #ok-tool .ok-tri .ok-buee{transform:none}
+}
+</style>
+</head>
+<body>
+<div id="ok-tool">
+  <div class="ok-bg" aria-hidden="true"><div class="ok-particles"></div></div>
+  <div class="ok-bg-light" aria-hidden="true"></div>
+
+  <header class="ok-top">
+    <button type="button" class="ok-close" data-act="quit" aria-label="Quitter l'outil"></button>
+    <nav class="ok-nav" aria-label="Progression"><ol class="ok-progress"></ol></nav>
+    <span class="ok-tag"><span class="ok-tag-long"></span><span class="ok-tag-short"></span></span>
+  </header>
+
+  <main class="ok-main">
+    <div class="ok-stage" id="ok-stage"></div>
+  </main>
+
+  <button type="button" class="ok-back" data-act="back" aria-label="Étape précédente" hidden></button>
+  <div class="ok-dock">
+    <button type="button" class="ok-sound" data-act="sound" aria-pressed="false" aria-label="Activer le son"></button>
+    <button type="button" class="ok-mascot" data-act="mascot" aria-label="Aide de la mascotte" aria-expanded="false" aria-controls="ok-bubble"></button>
+    <div class="ok-bubble" id="ok-bubble" role="status" hidden></div>
+  </div>
+
+  <div class="ok-modal" hidden>
+    <div class="ok-modal-card" role="dialog" aria-modal="true" aria-labelledby="ok-modal-title">
+      <h2 id="ok-modal-title"></h2>
+      <p class="ok-modal-txt"></p>
+      <div class="ok-modal-actions">
+        <button type="button" class="ok-btn-stay" data-act="stay"></button>
+        <button type="button" class="ok-btn-quit" data-act="doQuit"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+/* =====================================================================
+   CONTENT : tous les textes de l'outil (aucun texte en dur ailleurs).
+   **mot** = mot clé (gras / jaune selon le contexte)
+   {{mot}} = mot clé en pastille bleu marine
+   ===================================================================== */
+var CONTENT = {
+  tag: 'PSYCHOLOGIE DE GROUPE · DÉSIRER COMME LES AUTRES',
+  tagShort: 'DÉSIRER COMME LES AUTRES',
+  ui: {
+    close: "Quitter l'outil", back: 'Étape précédente', stepAria: 'Étape {n}',
+    soundOn: 'Activer le son', soundOff: 'Couper le son', mascot: 'Aide de la mascotte',
+    quitTitle: "Quitter l'outil ?", quitText: 'Ta progression sera remise à zéro.', stay: 'Rester', quit: 'Quitter',
+    missionLabel: 'Mission :', contextLabel: 'Contexte :', ytLink: 'Ouvrir sur YouTube ↗', playAria: 'Lire la vidéo : {t}',
+    yourAnswer: '(ta réponse)', goodAnswer: '(bonne réponse)', euros: '{v} euros'
+  },
+  quotes: {
+    girardSacre: { text: 'Le désir est essentiellement **mimétique**, il se calque sur un désir modèle ; il élit le même objet que ce modèle.', name: 'René Girard', role: 'philosophe franco-américain', work: 'La Violence et le Sacré', italic: true, year: '1972' },
+    girardAutre: { text: "L'homme désire toujours selon le **désir de l'Autre**.", name: 'René Girard', role: 'philosophe franco-américain', work: 'théorie du désir mimétique' },
+    lacan: { text: "Le désir de l'homme est le **désir de l'Autre**.", name: 'Jacques Lacan', role: 'psychiatre et psychanalyste français', work: 'Le Séminaire, livre XI', italic: true, year: '1973' },
+    girardModele: { text: "Le désir passe par un **modèle** qui nous montre ce qu'il faut désirer.", name: 'René Girard', role: 'philosophe franco-américain', work: 'théorie du désir mimétique' }
+  },
+  quoteLabel: 'CITATION',
+
+  s1: {
+    title: 'LA MÊME CHAUSSURE… **OU PRESQUE**',
+    mission: 'Bouge le curseur en fonction du prix que tu leur attribues.',
+    mascot: 'Fais confiance à ton instinct : combien vaut chaque paire ?',
+    question: 'COMBIEN COÛTENT CES 2 PAIRES DE BASKETS ?',
+    limited: { badge: 'ÉDITION LIMITÉE', note: '500 paires disponibles', aria: 'Prix de la paire en édition limitée', img: 'Basket rose avec des charms accrochés aux lacets' },
+    stock: { badge: 'Toujours en stock', aria: 'Prix de la paire toujours en stock', img: 'La même basket en noir, sans décoration' },
+    validate: 'VALIDER MES PRIX', help: 'Bouge les deux curseurs pour valider',
+    colMine: 'TES PRIX', lineLimited: 'Édition limitée : {x} €', lineStock: 'Toujours en stock : {y} €',
+    colReal: 'LA RÉALITÉ', real: 'Même modèle · même qualité',
+    more: 'Tu as donné **{d} € de plus** à la paire en édition limitée.',
+    equal: "Tu as donné **le même prix** aux deux paires : bien vu. Pourtant, la plupart des gens paient plus cher l'édition limitée.",
+    less: "Tu as donné **plus de valeur** à la paire toujours en stock. Pourtant, la plupart des gens paient plus cher l'édition limitée.",
+    same: 'MÊME MODÈLE, MÊME QUALITÉ, COULEUR DIFFÉRENTE',
+    trap: "**Le piège** : la seule différence est un message : « Peu de gens l'auront ». La qualité n'a pas changé, son **signal** si.",
+    final: 'POURQUOI ESTIMONS-NOUS PLUS CE QUE **PEU DE GENS** PEUVENT AVOIR ?',
+    cta: 'DÉCOUVRIR POURQUOI'
+  },
+
+  s2: {
+    title: 'UNE **EXCLUSIVITÉ** MAGNIFIQUE… ENFIN… JE CROIS ?',
+    context: 'Une nouvelle paire de chaussures vient de sortir, **Lina** la veut absolument.',
+    mascot: 'Lis bien ce que Lina sait vraiment de ces chaussures.',
+    phoneTitle: 'ENVOIE UN TEXTO', phoneText: 'Clique pour envoyer ton message', sendAria: 'Envoyer le message',
+    people: { C: { name: 'CARL', initial: 'C', color: 'orange' }, L: { name: 'LINA', initial: 'L', color: 'green' } },
+    messages: [
+      ['C', "T'as vu ? Tout le monde parle des nouvelles sneakers en édition limitée."],
+      ['L', 'Elles sont comment ?'],
+      ['C', "Aucune idée 😅 mais il n'en reste plus qu'une seule."],
+      ['L', "Faut que j'en trouve."]
+    ],
+    typingAria: '{n} est en train d’écrire…',
+    ask: 'ET TOI ?',
+    question: 'POURQUOI LINA VEUT-ELLE **ABSOLUMENT** CES CHAUSSURES ?',
+    choices: ['Car elles sont forcément belles', 'Elle les a repérées en magasin', "Parce que d'autres les veulent et qu'il ne reste qu'une seule paire"],
+    correct: 2,
+    mechLabel: 'LE MÉCANISME', okTitle: 'Bonne réponse !', koTitle: 'Pas tout à fait…',
+    ok: "Oui : Lina n'a pas vu l'objet, elle a vu le {{désir des autres}}. Sa valeur vient du **groupe** qui les veut, pas de la chaussure.",
+    ko: "Non, pas tout à fait : Lina n'a pas vu l'objet, elle a vu le {{désir des autres}}. Sa valeur vient du **groupe** qui les veut, pas de la chaussure.",
+    quote: 'girardSacre',
+    cta: 'CONTINUER'
+  },
+
+  s3: {
+    title: "L'**EFFET DE GROUPE** INFLUENCE NOTRE DÉSIR",
+    mission: '**Clique** pour dérouler les 4 étapes de ce mécanisme.',
+    mascot: 'Déroule les 4 étapes, puis regarde où mène la dernière.',
+    next: 'ÉTAPE SUIVANTE', loop: 'Et après ?', loopAria: 'Et après ? Voir où mène la dernière étape',
+    cards: [
+      { num: '01', icon: 'eye', color: '#5BA8F5', title: 'JE REGARDE LES AUTRES', text: "Le désir ne va pas directement de moi à l'objet, il passe par **l'autre**." },
+      { num: '02', icon: 'tag', color: '#A58BF2', title: "L'OBJET GAGNE DE LA VALEUR", text: "Le désir des autres sert d'**indice de qualité** : je conclus que l'objet « en vaut la peine »." },
+      { num: '03', icon: 'gift', color: '#F2A54A', title: "JE DÉSIRE ET J'AGIS", text: "Je fais la queue, j'achète, je cherche à l'**obtenir**." },
+      { num: '04', icon: 'target', color: '#EF6A5E', title: 'JE DEVIENS UN MODÈLE À MON TOUR', text: 'Mon achat devient un **signal** pour d’autres, et la boucle repart.' }
+    ],
+    loopLabel: 'BOUCLE · CERCLE VICIEUX',
+    warn: '**Attention** : la boucle s’arrête quand la **rareté** disparaît : le désir **retombe**.',
+    defLabel: 'DÉFINITION',
+    def: 'Désirer comme les autres, c’est laisser le regard du **groupe** influencer ce que nous considérons comme **désirable**. Le désir ne porte donc pas sur l’objet, mais sur sa **valeur sociale**.',
+    quotes: ['girardAutre', 'lacan'],
+    cta: 'EXPLORE ENCORE'
+  },
+
+  s4: {
+    title: 'LE **BROUILLARD** DE LA VÉRITÉ',
+    mission: 'Retire la **fumée** pour comprendre le **mécanisme**.',
+    mascot: "Qu'est-ce qui se cache derrière la fumée ?",
+    clear: 'ENLEVER LA FUMÉE',
+    me: 'MOI', object: "L'OBJET", other: "L'AUTRE",
+    question: 'Est-ce que je le veux vraiment ?',
+    answer: 'Si elle le veut, alors je le veux aussi',
+    wants: 'Elle le désire', look: 'Je la regarde',
+    triangle: 'LE TRIANGLE DU DÉSIR',
+    svgAria: 'Schéma : moi, l’objet et, caché par la fumée, l’autre.',
+    svgAriaDone: 'Le triangle du désir : je regarde l’autre, elle désire l’objet, donc je le veux aussi.',
+    ideaLabel: "L'IDÉE",
+    idea: "Je crois désirer l'objet pour lui-même. En réalité, mon désir **passe par l'autre** : je regarde ce qu'elle veut, et je le veux à mon tour.",
+    retainLabel: "CE QU'IL FAUT RETENIR",
+    retain: "LA FUMÉE CACHE LE **BIAIS**, PUIS ELLE FINIT PAR CACHER LA **RATIONALITÉ** LORSQUE L'EFFET DE GROUPE EST TROP FORT.",
+    quote: 'girardModele',
+    cta: 'TESTE-TOI !'
+  },
+
+  s5: {
+    title: "QUELLE EST L'**INFLUENCE** ?",
+    subtitle: 'LES 5 INDICES QUI INFLUENCENT LE DÉSIR',
+    mission: "**À toi de jouer** : choisis en cliquant sur l'**indice** caché dans chaque situation.",
+    mascot: 'Rareté, popularité, prix, imitation ou appartenance ?',
+    desire: 'LE DÉSIR',
+    indices: [
+      { id: 'rarete', icon: 'ingot', color: '#F5C518', name: 'Indice de rareté', caps: 'INDICE DE RARETÉ', def: 'moins il y en a, plus on le veut' },
+      { id: 'popularite', icon: 'crowd', color: '#5BC0F8', name: 'Indice de popularité', caps: 'INDICE DE POPULARITÉ', def: "beaucoup l'achètent, donc ça vaut le coup" },
+      { id: 'prix', icon: 'bill', color: '#4CC38A', name: 'Indice de prix', caps: 'INDICE DE PRIX', def: 'plus cher, donc forcément mieux' },
+      { id: 'imitation', icon: 'mirror', color: '#B197FC', name: "Indice d'imitation", caps: "INDICE D'IMITATION", def: "je copie quelqu'un que j'estime" },
+      { id: 'appartenance', icon: 'circle', color: '#F7A04B', name: "Indice d'appartenance", caps: "INDICE D'APPARTENANCE", def: 'avoir la même chose pour faire partie du groupe' }
+    ],
+    round: 'MANCHE {n} / 5', situation: 'Une situation · {p}',
+    ask: 'À quel indice correspond cette situation ?',
+    okTitle: 'BONNE RÉPONSE !',
+    koTitle: 'PAS TOUT À FAIT : ICI, LA BONNE RÉPONSE EST « {name} »',
+    defLabel: 'Définition :',
+    rounds: [
+      { place: 'Site internet', text: 'Sur un site, une affiche indique : « Édition limitée : 500 pièces, plus que 12 en stock »', answer: 0,
+        expl: 'La **quantité limitée** rend le produit plus attractif car il est plus **rare**.', def: 'moins il y en a, plus on le veut.' },
+      { place: 'Application', text: 'Une application affiche « 48 000 personnes l’ont acheté cette semaine » sous un produit', answer: 1,
+        expl: 'Le **nombre d’acheteurs** témoigne de la **popularité** du produit.', def: 'beaucoup l’achètent, donc ça vaut le coup.' },
+      { place: 'Boutique', text: 'Lina compare deux sacs presque identiques : « Celui-là coûte trois fois plus cher, il doit être meilleur »', answer: 2,
+        expl: 'Ici, le **prix** fait gage de qualité ou de **statut**, sans avoir besoin de vérifier si c’est vrai.', def: 'plus cher, donc forcément mieux.' },
+      { place: 'Réseaux sociaux', text: 'Après une vidéo de son streameur préféré, Adam commande exactement la même coque de téléphone, dans la même couleur', answer: 3,
+        expl: 'On **copie** le comportement d’une personne qu’on estime pour lui **ressembler** et dire « j’ai la même chose que lui », sans se soucier de nos propres goûts personnels.', def: 'je copie quelqu’un que j’estime.' },
+      { place: 'Lycée', text: 'Dans une bande de lycéens, tout le monde porte la même veste. Un élève sans cette veste entend tous les jours « tu n’es pas des nôtres »', answer: 4,
+        expl: 'Un simple produit permet à un individu de **faire partie d’un groupe**.', def: 'avoir la même chose pour faire partie du groupe.' }
+    ],
+    nextRound: 'PASSER À LA MANCHE SUIVANTE', seeResult: 'VOIR LE RÉSULTAT',
+    endLabel: 'ENQUÊTE TERMINÉE',
+    endGood: 'BRAVO, TU AS SU RECONNAÎTRE LES INDICES !', endBad: 'CONTINUE À OBSERVER.',
+    endScore: 'Tu as détecté **{n} / 5** indices.',
+    gridLabel: 'TA GRILLE DE LECTURE', gridTitle: 'LES 5 INDICES À RETENIR',
+    cta: 'CONTINUER'
+  },
+
+  s6: {
+    title: "C'EST ARRIVÉ DANS LA **VRAIE VIE**",
+    mascot: 'Regarde la vidéo, puis choisis ta réponse.',
+    caseLabel: 'ENQUÊTE {n}', observe: 'Observe :', verdict: 'VERDICT',
+    next: 'ENQUÊTE SUIVANTE', last: 'À TOI DE JOUER',
+    cases: [
+      { title: 'LA STANLEY CUP',
+        context: 'Une **gourde** devient du jour au lendemain l’objet que **tout le monde** veut.',
+        video: { id: 'ODuVhi69pP4', title: 'Dépenser 1000 € pour une gourde Stanley', channel: 'PopMoney', vertical: true },
+        observe: 'comment les gens se précipitent sur la même gourde.',
+        question: 'REGARDE LA VIDÉO. POURQUOI LES GENS VEULENT-ILS TANT AVOIR CETTE GOURDE ?',
+        choices: [
+          { t: 'Parce que des scientifiques ont prouvé qu’elle était mieux que les autres gourdes', v: 'Personne ne compare la **qualité réelle** : on regarde ce que les autres **achètent**.' },
+          { t: 'Parce qu’elle est jolie et pratique', v: 'D’autres gourdes sont tout aussi **pratiques**. Ce qui change, c’est que **tout le monde en parle** et en veut une.' },
+          { t: 'Parce qu’elle est devenue virale et que certains modèles sont des collections limitées', v: 'Les **indices d’imitation et de rareté** agissent. Nous voulons **ressembler aux autres** et avoir les mêmes objets, sans forcément nous soucier d’une meilleure qualité.' }
+        ], correct: 2,
+        summary: 'Ce que tout le monde veut finit par sembler valoir la peine d’être voulu.' },
+      { title: 'LES LABUBUS',
+        context: 'En 2024-2025, les **Labubus** sont devenus un phénomène viral sur les réseaux sociaux. Le principe de « **collection** » a tourné au drame dans certains lieux.',
+        video: { id: 'AwUfgwKvntM', title: 'Short YouTube · Les Labubus (sous-titres en français)', channel: '', vertical: true, cc: true },
+        observe: 'ce que les gens veulent obtenir à tout prix.',
+        question: 'POURQUOI LES GENS SE BATTENT-ILS POUR OBTENIR CES PELUCHES ?',
+        choices: [
+          { t: 'Les Labubus sont de très belles peluches', v: 'L’**apparence** ne suffit pas à expliquer les bousculades : ce qui pousse à se battre, c’est la **peur de passer à côté**.' },
+          { t: 'Tout le monde veut obtenir les Labubus « rares »', v: 'La **rareté** du produit le rend attractif et ça devient une **nécessité** de l’avoir avant les autres. Il devient meilleur.' },
+          { t: 'Cette peluche a un prix très abordable', v: 'Un **prix abordable** ne provoque pas de bagarre : c’est la **difficulté à en obtenir** qui crée l’urgence.' }
+        ], correct: 1,
+        summary: 'Plus un objet est difficile à obtenir, plus il paraît précieux.' },
+      { title: 'LE CHOCOLAT DE DUBAÏ',
+        context: 'Le **chocolat de Dubaï** est devenu un produit star des **réseaux sociaux**.',
+        video: { id: 'ZlmdtYKFlL4', title: 'Chocolat de Dubaï : le phénomène envahit nos rayons !', channel: 'TF1 INFO', vertical: true },
+        observe: 'comment les vidéos de dégustation se multiplient.',
+        question: 'DANS CETTE VIDÉO, QU’EST-CE QUI POURRAIT VOUS DONNER ENVIE D’ACHETER DU CHOCOLAT DE DUBAÏ ?',
+        choices: [
+          { t: 'Ça a l’air bon pour la santé', v: 'Une vidéo virale ne prouve **rien** sur la **santé** : l’envie vient d’ailleurs.' },
+          { t: 'C’est un phénomène devenu viral', v: 'Les **vidéos de dégustation** se multiplient et donnent envie au consommateur de goûter, à son tour, un produit qui semble si apprécié et que **tout le monde mange** sur les réseaux sociaux.' },
+          { t: 'C’est un produit local', v: 'Que le produit soit **local** n’est pas ce qui le rend désirable ici : c’est de voir **tout le monde en manger** sur les réseaux.' }
+        ], correct: 1,
+        summary: 'Voir tout le monde goûter suffit à donner envie.' }
+    ]
+  },
+
+  s7: {
+    wordsTitle: 'LES **MOTS** À RETENIR',
+    wordsSub: 'Avant de jouer, fixe le vocabulaire essentiel du désir mimétique.',
+    words: [
+      { icon: 'heart', color: '#F7A04B', name: 'DÉSIR MIMÉTIQUE', text: 'Désirer un objet parce qu’un **modèle** le désire.' },
+      { icon: 'crowd', color: '#5BC0F8', name: 'EFFET DE GROUPE', text: 'Le regard du **groupe** influence ce que nous trouvons désirable.' },
+      { icon: 'signal', color: '#B197FC', name: 'SIGNAL SOCIAL', text: 'Ce que l’objet **dit de nous** aux autres : rare, populaire, cher…' }
+    ],
+    play: 'À TOI DE JOUER',
+    title: 'REPÈRE ET UTILISE LE **MÉCANISME**',
+    mission: '**À toi de jouer** : clique sur la **bonne réponse**.',
+    mascot: 'Comprendre, repérer, appliquer : 3 questions.',
+    xp: 'XP', xpAria: 'Points d’expérience : {v} XP',
+    qnum: 'QUESTION {n} / 3',
+    okTitle: 'CORRECT ! +10 XP', koTitle: 'PAS TOUT À FAIT',
+    next: 'SUIVANTE', result: 'VOIR MON RÉSULTAT',
+    questions: [
+      { cat: 'Comprendre le mécanisme',
+        q: 'Deux restaurants identiques se font face. Des gens attendent devant le premier, et le deuxième est vide. Pourquoi avons-nous tendance à aller vers le restaurant plein ?',
+        choices: [
+          { t: 'Parce que les restaurants avec des clients sont toujours moins chers', v: 'Rien ne prouve que la foule vienne pour le **prix** : ce n’est pas le prix, c’est l’**indice social**.' },
+          { t: 'Parce qu’on prend le désir des autres comme un indice de ce qui en vaut la peine', v: 'Le **désir des autres** sert de repère : si beaucoup en veulent, ça doit **valoir le coup**.' },
+          { t: 'Parce que, plus on est de fous, plus on rit', v: 'Ce n’est pas une question d’**ambiance** : on suppose simplement que **la foule sait**.' }
+        ], correct: 1 },
+      { cat: 'Repérer un indice',
+        q: 'Après la rentrée, un élève arrive avec une nouvelle coupe de cheveux. Le week-end suivant, trois camarades vont chez le coiffeur et demandent la même. Quel indice agit ici ?',
+        choices: [
+          { t: 'Indice de rareté', v: 'Rien n’est **limité** : la coupe se **diffuse**, elle ne se raréfie pas.' },
+          { t: 'Indice de prix', v: 'Aucun **prix** n’est comparé ici : les camarades veulent **la même coupe**.' },
+          { t: 'Indice d’imitation', v: 'Les trois camarades **copient** un **modèle** qu’ils côtoient.' }
+        ], correct: 2 },
+      { cat: 'Appliquer à une situation nouvelle',
+        q: 'Une marque vend une gourde en édition limitée, très recherchée. Puis elle en produit dix fois plus et elle est vendue partout. D’après le mécanisme, que devient le désir ?',
+        choices: [
+          { t: 'Il retombe, car la rareté disparaît', v: 'Le **signal social** s’efface : le désir portait sur la **rareté**, pas sur la gourde.' },
+          { t: 'Il augmente car plus de gens la possèdent', v: 'Plus de gens la possèdent, mais la gourde ne dit plus **« peu de gens l’ont »**.' },
+          { t: 'Il ne change pas car la gourde est identique', v: 'L’objet est identique, mais son **signal social** a changé : le désir suit le **signal**.' }
+        ], correct: 0 }
+    ],
+    bravo: 'BRAVO **!**', unlock: 'TU VIENS DE DÉBLOQUER', level: 'UN NOUVEAU NIVEAU',
+    statSteps: 'ÉTAPES', statTime: 'TEMPS', statXp: 'XP', stepsValue: '8/8', minUnit: 'MIN',
+    mascotEnd: 'Bravo. Tu vois le désir des autres, maintenant.',
+    quoteCta: 'LA CITATION À RETENIR',
+    quoteLabel: 'CITATION À RETENIR',
+    quote: 'girardSacre',
+    cta: 'POUR ALLER PLUS LOIN'
+  },
+
+  s8: {
+    kicker: 'POUR ALLER PLUS LOIN',
+    title: 'DEVIENS EXPERT',
+    sub: 'Deux pistes pour aller plus loin et ancrer ce que tu viens d’apprendre.',
+    mascot: 'Un livre et une vidéo pour aller plus loin.',
+    book: {
+      chip: 'LE LIVRE DE RÉFÉRENCE · 2021',
+      title: 'INFLUENCE ET MANIPULATION',
+      meta: 'Robert B. Cialdini (nouvelle édition augmentée, First, 2021)',
+      coverBand: 'PSYCHOLOGIE SOCIALE', coverTitle: ['INFLUENCE', 'ET', 'MANIPULATION'], coverAuthor: 'ROBERT B. CIALDINI',
+      coverAria: 'Couverture du livre Influence et manipulation, de Robert B. Cialdini',
+      hook: 'Plus une opportunité ou un objet semble difficile à obtenir ou limité dans le temps, plus notre cerveau lui attribue de la **valeur**.',
+      beforeLabel: 'Avant de lire :',
+      before: 'Repère les situations où on associe la **rareté** à la **qualité** et observe comment cette tendance régit l’humain dans son quotidien.',
+      summaryLabel: 'Résumé :',
+      summary: 'Cialdini explique ce phénomène par un **raccourci mental** (ou biais cognitif) : nous avons tendance à associer la rareté à la qualité. Si un produit est rare, c’est qu’il est convoité, donc bon. Ce principe est largement utilisé en économie, en négociation et en marketing pour déclencher un **sentiment d’urgence** chez le consommateur (via des expressions telles que « dernières pièces disponibles » ou « offre limitée dans le temps »). Par exemple, cela permet de réfléchir au succès des Labubu : est-ce que l’objet nous plaît vraiment, ou est-ce que sa **popularité** nous donne envie de le posséder ?',
+      whyLabel: 'Pourquoi il est pertinent :',
+      why: 'il donne un concept théorique précis pour expliquer ce sujet.',
+      knowLabel: 'À savoir :',
+      know: 'c’est un livre de psychologie sociale accessible, plein d’exemples concrets. Le chapitre sur la rareté suffit pour ce sujet.',
+      link: 'EN SAVOIR PLUS', url: 'https://catalogue.bnf.fr/ark:/12148/cb47206759t', linkAria: 'En savoir plus sur le livre (catalogue de la BnF, nouvel onglet)'
+    },
+    video: {
+      chip: 'VIDÉO · YOUTUBE',
+      title: 'LE DÉSIR MIMÉTIQUE — RENÉ GIRARD',
+      meta: 'chaîne Le Précepteur · en français',
+      missionLabel: 'MISSION AVANT DE REGARDER',
+      mission: 'Repère le **triangle** : moi, le modèle, l’objet.',
+      text: 'Cette vidéo explique la théorie de René Girard : le **désir** peut être influencé par le désir d’une **autre personne**.',
+      player: { id: '9tn7RVVD_bA', title: 'Le désir mimétique — René Girard (Le Précepteur)', vertical: false }
+    },
+    replay: 'REJOUER'
+  }
+};
+
+/* =====================================================================
+   OUTILS
+   ===================================================================== */
+var root = document.getElementById('ok-tool');
+if (!root) return;
+var stage = root.querySelector('#ok-stage');
+var UI = CONTENT.ui;
+var mqReduced = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+var mqMobile = window.matchMedia ? window.matchMedia('(max-width: 759px)') : null;
+function reduced() { return !!(mqReduced && mqReduced.matches); }
+function isMobile() { return mqMobile ? mqMobile.matches : window.innerWidth < 760; }
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+}
+/* Texte -> HTML : échappe, apostrophes typographiques, **gras**, {{pastille}}, espaces insécables */
+function fmt(s) {
+  var h = esc(String(s).replace(/'/g, '’'));
+  h = h.replace(/\{\{(.+?)\}\}/g, '<strong class="ok-tagword">$1</strong>');
+  h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  h = h.replace(/ ([?!:;»])/g, ' $1').replace(/« /g, '« ');
+  return h;
+}
+function plain(s) { return String(s).replace(/\*\*|\{\{|\}\}/g, '').replace(/'/g, '’'); }
+function tpl(s, v) { return String(s).replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }); }
+function $(sel, ctx) { return (ctx || root).querySelector(sel); }
+function $$(sel, ctx) { return Array.prototype.slice.call((ctx || root).querySelectorAll(sel)); }
+function node(html) { var t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; }
+function add(parent, html, delay) {
+  if (!parent) return null;
+  var n = node(html);
+  if (delay != null) n.style.setProperty('--d', delay + 'ms');
+  parent.appendChild(n);
+  return n;
+}
+function restart(el, cls) { if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+
+/* Minuteries de l'étape : toutes annulées quand on quitte l'étape */
+var timers = [];
+function T(fn, ms) {
+  var id = setTimeout(function () { timers = timers.filter(function (x) { return x !== id; }); fn(); }, reduced() ? Math.min(ms, 200) : ms);
+  timers.push(id);
+  return id;
+}
+function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+
+function inView(el) {
+  if (!el || !el.isConnected) return;
+  T(function () { if (el.isConnected) el.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'nearest' }); }, 80);
+}
+function focusEl(el) { if (el && el.isConnected) { try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); } } }
+
+function countTo(el, from, to, dur) {
+  if (!el) return;
+  if (reduced() || from === to) { el.textContent = to; return; }
+  var t0 = null;
+  function step(ts) {
+    if (!el.isConnected) return;
+    if (t0 === null) t0 = ts;
+    var p = Math.min(1, (ts - t0) / dur);
+    var e = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(from + (to - from) * e);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/* =====================================================================
+   ICÔNES (SVG au trait)
+   ===================================================================== */
+var ICONS = {
+  eye: '<path d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/>',
+  tag: '<path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><circle cx="7" cy="7" r="1.6"/>',
+  gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v9H5v-9"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
+  target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  warn: '<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  wind: '<path d="M9.6 4.6A2 2 0 1 1 11 8H2M12.6 19.4A2 2 0 1 0 14 16H2M17.7 7.7A2.5 2.5 0 1 1 19.5 12H2"/>',
+  heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>',
+  ingot: '<path d="M2.5 19h19l-3.2-8.5H5.7z"/><path d="M8 10.5L9.6 5h4.8l1.6 5.5"/><path d="M9 15h6"/>',
+  crowd: '<circle cx="12" cy="7" r="3"/><path d="M6.5 20v-1.5a5.5 5.5 0 0 1 11 0V20"/><circle cx="4.5" cy="9.5" r="2"/><path d="M1.5 19v-.8A3.5 3.5 0 0 1 5 14.7"/><circle cx="19.5" cy="9.5" r="2"/><path d="M22.5 19v-.8a3.5 3.5 0 0 0-3.5-3.5"/>',
+  bill: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 12h.01M18 12h.01"/>',
+  mirror: '<ellipse cx="12" cy="9.5" rx="6" ry="7.5"/><path d="M12 17v4.5M8.5 21.5h7"/><path d="M9.5 7l3.5-2.5M9.5 10.5l5-3.5"/>',
+  circle: '<circle cx="12" cy="12" r="8.5" stroke-dasharray="3 3"/><circle cx="12" cy="3.5" r="2.2"/><circle cx="19.4" cy="16.2" r="2.2"/><circle cx="4.6" cy="16.2" r="2.2"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+  flag: '<path d="M5 22V3.5"/><path d="M5 4h12.5l-2.5 4.5 2.5 4.5H5"/>',
+  bulb: '<path d="M9 18h6M10 21.5h4"/><path d="M12 2.5a6.5 6.5 0 0 0-3.8 11.8c.6.5.8 1.1.8 1.7h6c0-.6.2-1.2.8-1.7A6.5 6.5 0 0 0 12 2.5z"/>',
+  trophy: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',
+  book: '<path d="M2 4.5h7a3 3 0 0 1 3 3V21a2 2 0 0 0-2-2H2zM22 4.5h-7a3 3 0 0 0-3 3V21a2 2 0 0 1 2-2h8z"/>',
+  play: '<path d="M7 4.5l13 7.5-13 7.5z" fill="currentColor"/>',
+  send: '<path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/>',
+  chat: '<path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l1.9-5.2A8.4 8.4 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5z"/>',
+  arrowR: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  arrowL: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  x: '<path d="M18 6L6 18M6 6l12 12"/>',
+  check: '<path d="M20 6L9 17l-5-5"/>',
+  soundOff: '<path d="M11 5L6 9H2v6h4l5 4z"/><path d="M23 9l-6 6M17 9l6 6"/>',
+  soundOn: '<path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/>',
+  refresh: '<path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1L20.5 8.5"/><path d="M20.5 3.5v5h-5"/>',
+  flame: '<path d="M12 22c4 0 7-3 7-7 0-4.5-3.5-6.5-4.5-10-1 2-2 3-3.2 3.2C11.5 6 10.5 4 8.5 2.5 8.5 7 5 9 5 15c0 4 3 7 7 7z"/>',
+  doc: '<rect x="4.5" y="3" width="15" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  signal: '<path d="M4 20v-3M9 20v-7M14 20V9M19 20V4"/>',
+  ext: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'
+};
+function ic(name, cls) {
+  return '<svg class="ok-ic ' + (cls || '') + '" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (ICONS[name] || '') + '</svg>';
+}
+function cubeSVG() {
+  return '<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">' +
+    '<path d="M32 5L57 18L32 31L7 18Z" fill="#F5C518" stroke="#0B1550" stroke-width="2.5" stroke-linejoin="round"/>' +
+    '<path d="M7 18L32 31V59L7 46Z" fill="#2B48D8" stroke="#0B1550" stroke-width="2.5" stroke-linejoin="round"/>' +
+    '<path d="M57 18L32 31V59L57 46Z" fill="#E0412F" stroke="#0B1550" stroke-width="2.5" stroke-linejoin="round"/>' +
+    '<circle cx="15" cy="33" r="2.4" fill="#fff"/><circle cx="24" cy="37.5" r="2.4" fill="#fff"/>' +
+    '<circle cx="15.5" cy="33.4" r="1.1" fill="#0B1550"/><circle cx="24.5" cy="37.9" r="1.1" fill="#0B1550"/>' +
+    '<path d="M14 41c2.6 3.4 7 5.2 10.5 4.6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>';
+}
+
+/* =====================================================================
+   SON (Web Audio, désactivé par défaut)
+   ===================================================================== */
+var actx = null;
+function sfx(type) {
+  if (state.muted || !actx) return;
+  try {
+    var now = actx.currentTime;
+    var seq = type === 'good' ? [[660, 0, .09], [990, .09, .14]] : type === 'bad' ? [[300, 0, .12], [200, .12, .18]] : [[720, 0, .05]];
+    seq.forEach(function (n) {
+      var o = actx.createOscillator(), g = actx.createGain();
+      o.type = type === 'bad' ? 'triangle' : 'sine';
+      o.frequency.value = n[0];
+      g.gain.setValueAtTime(0.0001, now + n[1]);
+      g.gain.exponentialRampToValueAtTime(type === 'click' ? 0.035 : 0.06, now + n[1] + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + n[1] + n[2]);
+      o.connect(g); g.connect(actx.destination);
+      o.start(now + n[1]); o.stop(now + n[1] + n[2] + 0.02);
+    });
+  } catch (e) { /* son facultatif */ }
+}
+
+/* =====================================================================
+   ÉTAT
+   ===================================================================== */
+function freshState(muted) {
+  return {
+    step: 1, maxStep: 1, done: [false, false, false, false, false, false, false, false],
+    answers: {}, sliders: { a: 150, b: 150, movedA: false, movedB: false },
+    xp: 0, score5: 0, startTime: Date.now(), endTime: null, muted: muted !== false,
+    s1: { validated: false }, s2: { sent: false }, s3: { n: 1, loop: false }, s4: { phase: 0 },
+    s5: { round: 0, finished: false }, s6: { idx: 0 }, s7: { phase: 'words', q: 0 }
+  };
+}
+var state = freshState(true);
+var busy = false;
+var paintedDone = [false, false, false, false, false, false, false, false];
+
+/* =====================================================================
+   COMPOSANTS RÉUTILISABLES
+   ===================================================================== */
+function titleHTML(t) { return '<h2 class="ok-title" tabindex="-1">' + fmt(t) + '</h2>'; }
+function missionHTML(m, label) {
+  return '<p class="ok-mission">' + (label === false ? '' : '<strong>' + fmt(label || UI.missionLabel) + '</strong> ') + fmt(m) + '</p>';
+}
+function ctaHTML(label, to, anim, act, extra) {
+  return '<div class="ok-cta-wrap' + (anim ? ' ok-cta-in' : '') + '"><button type="button" class="ok-cta" data-act="' + (act || 'next') + '"' +
+    (to ? ' data-to="' + to + '"' : '') + (extra || '') + '>' + esc(label) + ic('arrowR') + '</button></div>';
+}
+function addCTA(parent, label, to, anim, act) {
+  var w = add(parent, ctaHTML(label, to, anim, act));
+  if (anim && w) { var b = w.querySelector('button'); T(function () { focusEl(b); inView(w); }, 60); }
+  return w;
+}
+function quoteHTML(key, opts) {
+  var q = CONTENT.quotes[key]; opts = opts || {};
+  var work = q.italic ? '<em>' + esc(q.work) + '</em>' : esc(q.work);
+  return '<figure class="ok-quote' + (opts.center ? ' is-center' : '') + (opts.anim ? ' ok-anim-in' : '') + '"' + (opts.d != null ? ' style="--d:' + opts.d + 'ms"' : '') + '>' +
+    '<p class="ok-label">' + (opts.label ? ic('bulb') : '') + esc(opts.label || CONTENT.quoteLabel) + '</p>' +
+    '<blockquote class="ok-quote-txt" style="margin:0">« ' + fmt(q.text) + ' »</blockquote>' +
+    '<figcaption class="ok-author"><span class="ok-bookic">' + ic('book') + '</span><span class="ok-author-name">' + esc(q.name) + '</span>' +
+    '<span class="ok-sep">·</span><span class="ok-author-role">' + esc(q.role) + '</span><span class="ok-sep">·</span><span>' + work + (q.year ? ', ' + esc(q.year) : '') + '</span></figcaption></figure>';
+}
+function choicesHTML(list, group, dark) {
+  return '<div class="ok-choices' + (dark ? ' is-dark' : '') + '" role="group">' + list.map(function (c, i) {
+    return '<button type="button" class="ok-choice ok-opt" data-act="choose" data-group="' + group + '" data-i="' + i + '">' +
+      '<span class="ok-letter" aria-hidden="true">' + 'ABC'.charAt(i) + '</span><span class="ok-choice-txt">' + fmt(c) + '</span><span class="ok-mark" aria-hidden="true"></span><span class="ok-sr ok-state"></span></button>';
+  }).join('') + '</div>';
+}
+/* Une réponse = un verrou. Peint les choix (juste / faux / estompé), animé ou non. */
+function resolveChoices(group, chosen, correct, animate, after) {
+  if (!group) { if (after) after(); return; }
+  var btns = $$('[data-i]', group);
+  btns.forEach(function (b) { b.disabled = true; b.setAttribute('aria-disabled', 'true'); });
+  function paintOne(i, cls) {
+    var b = btns[i]; if (!b) return;
+    b.classList.remove('is-dim');
+    b.classList.add(cls);
+    var m = b.querySelector('.ok-mark'); if (m) m.innerHTML = ic(cls === 'is-correct' ? 'check' : 'x');
+    var s = b.querySelector('.ok-state'); if (s) s.textContent = ' ' + (cls === 'is-correct' ? UI.goodAnswer : '') + (i === chosen ? ' ' + UI.yourAnswer : '');
+  }
+  function dimOthers() { btns.forEach(function (b, i) { if (i !== chosen && i !== correct) b.classList.add('is-dim'); }); }
+  if (!animate) { if (chosen !== correct) paintOne(chosen, 'is-wrong'); paintOne(correct, 'is-correct'); dimOthers(); if (after) after(); return; }
+  restart(btns[chosen], 'ok-pulse');
+  T(function () {
+    btns[chosen].classList.remove('ok-pulse');
+    if (chosen === correct) {
+      paintOne(chosen, 'is-correct'); restart(btns[chosen], 'ok-bounce'); sfx('good'); dimOthers();
+      T(function () { if (after) after(); }, 250);
+    } else {
+      paintOne(chosen, 'is-wrong'); restart(btns[chosen], 'ok-shake'); sfx('bad'); dimOthers();
+      T(function () { paintOne(correct, 'is-correct'); restart(btns[correct], 'ok-bounce'); }, 320);
+      T(function () { if (after) after(); }, 570);
+    }
+  }, 200);
+}
+/* Lecteur vidéo à façade */
+function videoHTML(v) {
+  var aria = tpl(UI.playAria, { t: v.title });
+  return '<div class="ok-video' + (v.vertical ? ' is-vertical' : '') + '" data-id="' + esc(v.id) + '"' + (v.cc ? ' data-cc="1"' : '') + ' data-title="' + esc(v.title) + '">' +
+    '<button type="button" class="ok-facade" data-act="playVideo" aria-label="' + esc(aria) + '">' +
+    '<img class="ok-thumb" src="https://i.ytimg.com/vi/' + esc(v.id) + '/hqdefault.jpg" alt="" loading="lazy" decoding="async">' +
+    '<span class="ok-veil"></span><span class="ok-playbtn">' + ic('play') + '</span><span class="ok-facade-title">' + esc(v.title) + '</span></button></div>' +
+    '<a class="ok-yt-link" href="https://www.youtube.com/watch?v=' + esc(v.id) + '" target="_blank" rel="noopener">' + esc(UI.ytLink) + '</a>';
+}
+function playVideo(btn) {
+  var box = btn.closest('.ok-video'); if (!box) return;
+  var id = box.getAttribute('data-id');
+  if (location.protocol === 'file:') { window.open('https://www.youtube.com/watch?v=' + id, '_blank', 'noopener'); return; }
+  var src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&hl=fr&cc_lang_pref=fr' + (box.getAttribute('data-cc') ? '&cc_load_policy=1' : '');
+  var f = document.createElement('iframe');
+  f.src = src; f.title = box.getAttribute('data-title') || 'Vidéo YouTube';
+  f.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+  f.setAttribute('allowfullscreen', '');
+  f.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+  box.innerHTML = ''; box.appendChild(f);
+  focusEl(f);
+}
+/* Miniature en échec : fond dégradé (jamais de zone noire) */
+root.addEventListener('error', function (e) {
+  var t = e.target; if (t && t.classList && t.classList.contains('ok-thumb')) { var f = t.closest('.ok-facade'); if (f) f.classList.add('is-fail'); }
+}, true);
+root.addEventListener('load', function (e) {
+  var t = e.target; if (t && t.classList && t.classList.contains('ok-thumb') && t.naturalWidth > 0 && t.naturalWidth <= 120) { var f = t.closest('.ok-facade'); if (f) f.classList.add('is-fail'); }
+}, true);
+
+/* =====================================================================
+   NAVIGATION ENTRE ÉTAPES
+   ===================================================================== */
+var RENDER = {};
+function swapStage(apply, dir) {
+  if (busy) return;
+  busy = true;
+  clearTimers(); closeBubble();
+  var outCls = dir === 'back' ? 'ok-out-right' : 'ok-out-left';
+  var inCls = dir === 'back' ? 'ok-in-left' : 'ok-in-right';
+  stage.classList.remove('ok-in-left', 'ok-in-right');
+  stage.classList.add(outCls);
+  setTimeout(function () {
+    stage.classList.remove(outCls);
+    stage.innerHTML = '';
+    apply();
+    updateChrome();
+    var top = root.getBoundingClientRect().top + (window.pageYOffset || 0);
+    window.scrollTo(0, Math.max(0, top));
+    stage.classList.add(inCls);
+    focusEl($('.ok-title', stage) || $('[tabindex="-1"]', stage));
+    setTimeout(function () { stage.classList.remove(inCls); busy = false; }, reduced() ? 150 : 420);
+  }, reduced() ? 120 : 300);
+}
+function goToStep(n, dir) {
+  if (n < 1 || n > 8) return;
+  swapStage(function () {
+    state.step = n;
+    if (n > state.maxStep) state.maxStep = n;
+    if (n === 8) state.done[7] = true;
+    root.classList.toggle('ok-is-light', n === 8);
+    RENDER[n](!!state.done[n - 1]);
+  }, dir);
+}
+function complete(n) { state.done[n - 1] = true; }
+
+/* Barre de progression, retour, mascotte */
+function buildChrome() {
+  $('.ok-close').innerHTML = ic('x');
+  $('.ok-close').setAttribute('aria-label', UI.close);
+  $('.ok-back').innerHTML = ic('arrowL');
+  $('.ok-back').setAttribute('aria-label', UI.back);
+  $('.ok-mascot').innerHTML = cubeSVG();
+  $('.ok-mascot').setAttribute('aria-label', UI.mascot);
+  $('.ok-tag-long').textContent = CONTENT.tag;
+  $('.ok-tag-short').textContent = CONTENT.tagShort;
+  $('#ok-modal-title').textContent = UI.quitTitle;
+  $('.ok-modal-txt').textContent = UI.quitText;
+  $('.ok-btn-stay').textContent = UI.stay;
+  $('.ok-btn-quit').textContent = UI.quit;
+  var ol = $('.ok-progress'), h = '';
+  for (var i = 1; i <= 8; i++) h += '<li><button type="button" class="ok-dot" data-act="goto" data-step="' + i + '" aria-label="' + esc(tpl(UI.stepAria, { n: i })) + '">' + i + '</button></li>';
+  ol.innerHTML = h;
+  var p = $('.ok-particles'), ph = '';
+  for (var k = 0; k < 16; k++) {
+    ph += '<span class="ok-particle" style="left:' + ((k * 37 + 11) % 100) + '%;top:' + ((k * 53 + 7) % 100) + '%;animation-duration:' + (16 + (k % 5) * 4) + 's;animation-delay:-' + (k * 1.7).toFixed(1) + 's;' + (k % 3 === 0 ? 'width:3px;height:3px;' : '') + '"></span>';
+  }
+  p.innerHTML = ph;
+  updateSound();
+}
+function updateChrome() {
+  var lis = $$('.ok-progress li');
+  lis.forEach(function (li, idx) {
+    var n = idx + 1, b = li.querySelector('.ok-dot');
+    var isCur = n === state.step, isDone = state.done[idx] && !isCur;
+    var reachable = n <= state.maxStep;
+    b.classList.toggle('is-current', isCur);
+    b.classList.toggle('is-done', isDone || (state.step === 8 && isCur));
+    li.classList.toggle('is-lit', reachable);
+    b.disabled = isCur || !reachable;
+    if (isCur) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+    if (isDone) {
+      if (!paintedDone[idx] || b.innerHTML.indexOf('svg') < 0) { b.innerHTML = ic('check'); if (!paintedDone[idx]) restart(b, 'is-new'); }
+    } else { b.textContent = n; b.classList.remove('is-new'); }
+    paintedDone[idx] = isDone;
+    b.setAttribute('aria-label', tpl(UI.stepAria, { n: n }) + (isDone ? ' ✓' : ''));
+  });
+  $('.ok-back').hidden = state.step === 1;
+}
+
+/* Mascotte */
+var bubbleTimer = null;
+function mascotText() {
+  var s = state.step;
+  if (s === 7) return (state.s7.phase === 'end' || state.s7.phase === 'quote') ? CONTENT.s7.mascotEnd : CONTENT.s7.mascot;
+  return CONTENT['s' + s].mascot;
+}
+function openBubble(text) {
+  var b = $('#ok-bubble'), m = $('.ok-mascot');
+  b.textContent = plain(text || mascotText());
+  b.hidden = false; restart(b, 'ok-bubble');
+  m.setAttribute('aria-expanded', 'true');
+  restart(m, 'ok-jump');
+  clearTimeout(bubbleTimer);
+  bubbleTimer = setTimeout(closeBubble, 5000);
+}
+function closeBubble() {
+  clearTimeout(bubbleTimer);
+  var b = $('#ok-bubble'); if (b) b.hidden = true;
+  var m = $('.ok-mascot'); if (m) m.setAttribute('aria-expanded', 'false');
+}
+function toggleBubble() { if ($('#ok-bubble').hidden) openBubble(); else { closeBubble(); restart($('.ok-mascot'), 'ok-jump'); } }
+
+/* Son */
+function updateSound() {
+  var b = $('.ok-sound');
+  b.innerHTML = ic(state.muted ? 'soundOff' : 'soundOn');
+  b.setAttribute('aria-pressed', state.muted ? 'false' : 'true');
+  b.setAttribute('aria-label', state.muted ? UI.soundOn : UI.soundOff);
+}
+function toggleSound() {
+  state.muted = !state.muted;
+  if (!state.muted && !actx) { try { var AC = window.AudioContext || window.webkitAudioContext; if (AC) actx = new AC(); } catch (e) { actx = null; } }
+  if (actx && actx.state === 'suspended') { try { actx.resume(); } catch (e) { /* rien */ } }
+  updateSound(); sfx('click');
+}
+
+/* Modale « Quitter » */
+var lastFocus = null;
+function openModal() {
+  var m = $('.ok-modal'); lastFocus = document.activeElement;
+  m.hidden = false; closeBubble();
+  ['.ok-top', '.ok-main', '.ok-back', '.ok-dock'].forEach(function (s) { var e = $(s); if (e) e.setAttribute('inert', ''); });
+  focusEl($('.ok-btn-stay'));
+}
+function closeModal() {
+  var m = $('.ok-modal'); if (m.hidden) return;
+  m.hidden = true;
+  ['.ok-top', '.ok-main', '.ok-back', '.ok-dock'].forEach(function (s) { var e = $(s); if (e) e.removeAttribute('inert'); });
+  focusEl(lastFocus && lastFocus.isConnected ? lastFocus : $('.ok-close'));
+}
+function resetAll() {
+  if (busy) { setTimeout(resetAll, 120); return; }
+  state = freshState(state.muted);
+  paintedDone = [false, false, false, false, false, false, false, false];
+  goToStep(1, 'back');
+}
+
+/* =====================================================================
+   ÉTAPE 1 — JE SUIS SURPRIS
+   ===================================================================== */
+function shoeSVG(limited, label) {
+  var body = limited ? '#F7A8C8' : '#24252E', sole = limited ? '#FFFFFF' : '#3A3B47', stroke = limited ? '#B23A70' : '#07070C',
+      line = limited ? '#E0679C' : '#4B4C5A', lace = limited ? '#FFFFFF' : '#8E8FA0', cap = limited ? '#F48CB8' : '#1B1C23';
+  var charms = limited ?
+    '<g stroke="#B23A70" stroke-width="1.6" fill="none"><path d="M116 52l-6 22"/><path d="M128 47l2 24"/><path d="M140 42l9 20"/></g>' +
+    '<path d="M110 78c-4-3-8-1-8 3 0 4 8 8 8 8s8-4 8-8c0-4-4-6-8-3z" fill="#F5C518" stroke="#B23A70" stroke-width="1.5"/>' +
+    '<circle cx="130" cy="76" r="6" fill="#7EE0C3" stroke="#B23A70" stroke-width="1.5"/>' +
+    '<path d="M150 62l2.4 5 5.4.6-4 3.7 1.1 5.3-4.9-2.7-4.8 2.7 1-5.3-4-3.7 5.4-.6z" fill="#C7B3FF" stroke="#B23A70" stroke-width="1.3"/>' : '';
+  return '<svg viewBox="0 0 240 140" role="img" aria-label="' + esc(label) + '">' +
+    '<ellipse cx="122" cy="128" rx="104" ry="6" fill="rgba(0,0,0,.28)"/>' +
+    '<path d="M22 94C20 82 28 72 44 68L86 60C100 57 108 48 114 38L120 28C124 22 132 20 138 24L150 30C158 36 168 34 176 28L196 20C204 18 210 20 214 26L224 62C228 74 228 86 224 94Z" fill="' + body + '" stroke="' + stroke + '" stroke-width="2.5" stroke-linejoin="round"/>' +
+    '<path d="M22 94C22 84 30 76 46 73L64 70C60 80 60 88 62 94Z" fill="' + cap + '" stroke="' + stroke + '" stroke-width="2" stroke-linejoin="round"/>' +
+    '<path d="M150 30C160 42 180 40 198 24" fill="none" stroke="' + stroke + '" stroke-width="2.5" stroke-linecap="round"/>' +
+    '<path d="M70 86C110 78 160 80 214 74" fill="none" stroke="' + line + '" stroke-width="2" stroke-dasharray="4 4"/>' +
+    '<path d="M14 100C14 96 18 94 24 94H222C228 94 230 98 230 102V108C230 114 226 120 220 120H26C18 120 14 116 14 110Z" fill="' + sole + '" stroke="' + stroke + '" stroke-width="2.5" stroke-linejoin="round"/>' +
+    '<path d="M22 107H222" stroke="' + line + '" stroke-width="2"/>' +
+    '<g stroke="' + lace + '" stroke-width="3" stroke-linecap="round"><path d="M102 56L122 46"/><path d="M108 60L130 49"/><path d="M114 63L138 51"/><path d="M106 49L126 55"/><path d="M116 45L134 58"/></g>' +
+    charms + '</svg>';
+}
+function shoeCardHTML(key, d, limited) {
+  var v = state.sliders[key], dis = state.s1.validated;
+  return '<article class="ok-shoe-card' + (limited ? ' is-limited' : '') + '">' +
+    '<div class="ok-shoe-badges">' + (limited ? '<span class="ok-badge-y">' + esc(d.badge) + '</span><span class="ok-shoe-note">' + esc(d.note) + '</span>' : '<span class="ok-badge-soft">' + esc(d.badge) + '</span>') + '</div>' +
+    '<div class="ok-shoe-img">' + shoeSVG(limited, d.img) + '</div>' +
+    '<div class="ok-price" id="ok-price-' + key + '" aria-hidden="true">' + v + ' €</div>' +
+    '<div class="ok-range-wrap"><label class="ok-sr" for="ok-range-' + key + '">' + esc(d.aria) + '</label>' +
+    '<input type="range" class="ok-range" id="ok-range-' + key + '" data-key="' + key + '" min="0" max="300" step="5" value="' + v + '" aria-valuetext="' + esc(tpl(UI.euros, { v: v })) + '" style="--p:' + (v / 3) + '%"' + (dis ? ' disabled aria-disabled="true"' : '') + '>' +
+    '<div class="ok-range-scale" aria-hidden="true"><span>0 €</span><span>300 €</span></div></div></article>';
+}
+RENDER[1] = function renderStep1() {
+  var C = CONTENT.s1, S = state;
+  stage.innerHTML = titleHTML(C.title) + missionHTML(C.mission) +
+    '<p class="ok-q-caps">' + fmt(C.question) + '</p>' +
+    '<div class="ok-shoes">' + shoeCardHTML('a', C.limited, true) + shoeCardHTML('b', C.stock, false) + '</div>' +
+    (S.s1.validated ? '' : '<div class="ok-cta-wrap" id="ok-s1-vwrap"><button type="button" class="ok-cta" id="ok-s1-validate" data-act="s1validate" aria-describedby="ok-s1-help" disabled aria-disabled="true">' + esc(C.validate) + ic('check') + '</button><p class="ok-help" id="ok-s1-help">' + esc(C.help) + '</p></div>') +
+    '<div id="ok-s1-result" aria-live="polite"></div>';
+  if (!S.s1.validated) updateValidate(false); else s1Result(false);
+};
+function updateValidate(anim) {
+  var b = $('#ok-s1-validate'); if (!b) return;
+  var ok = state.sliders.movedA && state.sliders.movedB;
+  var was = !b.disabled;
+  b.disabled = !ok; b.setAttribute('aria-disabled', ok ? 'false' : 'true');
+  var h = $('#ok-s1-help'); if (h) h.classList.toggle('is-off', ok);
+  if (ok && !was && anim) restart(b.parentNode, 'ok-cta-in');
+}
+function onRange(r) {
+  if (state.s1.validated || state.step !== 1) return;
+  var k = r.getAttribute('data-key'), v = Math.max(0, Math.min(300, parseInt(r.value, 10) || 0));
+  state.sliders[k] = v;
+  state.sliders[k === 'a' ? 'movedA' : 'movedB'] = true;
+  r.style.setProperty('--p', (v / 3) + '%');
+  r.setAttribute('aria-valuetext', tpl(UI.euros, { v: v }));
+  var p = $('#ok-price-' + k); if (p) { p.textContent = v + ' €'; restart(p, 'ok-tick'); }
+  updateValidate(true);
+}
+function s1Validate() {
+  if (state.s1.validated) return;
+  var S = state;
+  S.s1.validated = true;
+  S.answers.s1 = { x: S.sliders.a, y: S.sliders.b };
+  complete(1);
+  $$('.ok-range').forEach(function (r) { r.disabled = true; r.setAttribute('aria-disabled', 'true'); });
+  var w = $('#ok-s1-vwrap');
+  if (w) { w.classList.add('ok-fade-out'); T(function () { if (w.isConnected) w.remove(); }, 300); }
+  sfx('good');
+  T(function () { s1Result(true); }, 260);
+}
+function s1Result(anim) {
+  var C = CONTENT.s1, a = state.answers.s1, box = $('#ok-s1-result'); if (!box || !a) return;
+  var A = anim ? ' ok-anim-in' : '';
+  var sentence = a.x > a.y ? tpl(C.more, { d: a.x - a.y }) : a.x === a.y ? C.equal : C.less;
+  var cmp = add(box, '<div class="ok-compare' + A + '">' +
+    '<div class="ok-cmp-col"><p class="ok-label">' + esc(C.colMine) + '</p><p>' + fmt(C.lineLimited.replace('{x} €', '**' + a.x + ' €**')) + '</p><p>' + fmt(C.lineStock.replace('{y} €', '**' + a.y + ' €**')) + '</p></div>' +
+    '<div class="ok-cmp-neq" aria-hidden="true">≠</div>' +
+    '<div class="ok-cmp-col is-real"><p class="ok-label">' + esc(C.colReal) + '</p><p class="ok-cmp-real">' + fmt(C.real) + '</p></div></div>');
+  add(box, '<p class="ok-cmp-sentence' + A + '" style="--d:150ms">' + fmt(sentence) + '</p>');
+  if (anim) inView(cmp);
+  function rest() {
+    add(box, '<div class="ok-bigbox' + A + '">' + fmt(C.same) + '</div>', 0);
+    add(box, '<div class="ok-trap' + A + '">' + ic('warn') + '<p>' + fmt(C.trap) + '</p></div>', 150);
+    add(box, '<p class="ok-bigq' + A + '">' + fmt(C.final) + '</p>', 300);
+    if (anim) T(function () { addCTA(box, C.cta, 2, true); }, 700); else addCTA(box, C.cta, 2, false);
+  }
+  if (anim) T(function () { rest(); inView($('.ok-bigbox', box)); }, 900); else rest();
+}
+
+/* =====================================================================
+   ÉTAPE 2 — JE ME RECONNAIS
+   ===================================================================== */
+RENDER[2] = function renderStep2() {
+  var C = CONTENT.s2;
+  stage.innerHTML = titleHTML(C.title) + missionHTML(C.context, UI.contextLabel) +
+    '<div class="ok-panel" id="ok-s2-panel"></div><div id="ok-s2-after"></div>';
+  var panel = $('#ok-s2-panel');
+  if (!state.s2.sent) {
+    panel.innerHTML = '<div class="ok-phone-stage"><div class="ok-phone"><div class="ok-phone-screen"><div class="ok-phone-notch"></div>' +
+      '<div class="ok-phone-ic">' + ic('chat') + '</div><p class="ok-phone-title">' + esc(C.phoneTitle) + '</p><p class="ok-phone-txt">' + esc(C.phoneText) + '</p>' +
+      '<button type="button" class="ok-send" data-act="s2send" aria-label="' + esc(C.sendAria) + '">' + ic('send') + '</button></div></div></div>';
+    return;
+  }
+  s2Layout(panel);
+  C.messages.forEach(function (m) { add($('#ok-chat'), msgHTML(m, false)); });
+  s2Question(false);
+  if (state.answers.s2 != null) {
+    resolveChoices($('#ok-s2-q .ok-choices'), state.answers.s2, C.correct, false);
+    s2Feedback(false); s2After(false);
+  }
+};
+function s2Layout(panel) {
+  panel.innerHTML = '<div class="ok-s2-grid"><div class="ok-chat" id="ok-chat" aria-live="polite"></div><div class="ok-s2-q" id="ok-s2-q"></div></div>';
+}
+function msgHTML(m, anim) {
+  var p = CONTENT.s2.people[m[0]];
+  return '<div class="ok-msg' + (anim ? ' ok-anim-in' : '') + '"><span class="ok-avatar ok-av-' + p.color + '" aria-hidden="true">' + esc(p.initial) + '</span>' +
+    '<div class="ok-bub"><span class="ok-bub-name">' + esc(p.name) + '</span><p class="ok-bub-txt">' + fmt(m[1]) + '</p></div></div>';
+}
+function s2Send() {
+  if (state.s2.sent) return;
+  state.s2.sent = true;
+  var C = CONTENT.s2, panel = $('#ok-s2-panel'), ph = $('.ok-phone-stage', panel);
+  if (ph) ph.classList.add('ok-fade-out');
+  T(function () {
+    s2Layout(panel);
+    var chat = $('#ok-chat'), t = 0;
+    C.messages.forEach(function (m, i) {
+      T(function () {
+        var p = C.people[m[0]];
+        var typ = add(chat, '<div class="ok-msg ok-anim-in" data-typing="1"><span class="ok-avatar ok-av-' + p.color + '" aria-hidden="true">' + esc(p.initial) + '</span>' +
+          '<div class="ok-bub"><span class="ok-bub-name">' + esc(p.name) + '</span><span class="ok-typing" role="img" aria-label="' + esc(tpl(C.typingAria, { n: p.name })) + '"><i></i><i></i><i></i></span></div></div>');
+        inView(typ);
+        T(function () { var n = node(msgHTML(m, true)); if (typ.isConnected) typ.replaceWith(n); sfx('click'); if (i === C.messages.length - 1) T(function () { s2Question(true); }, 450); }, 900);
+      }, t);
+      t += 900 + 420;
+    });
+  }, 300);
+}
+function s2Question(anim) {
+  var C = CONTENT.s2, q = $('#ok-s2-q'); if (!q) return;
+  q.innerHTML = '<div class="' + (anim ? 'ok-anim-in' : '') + '"><p class="ok-label">' + esc(C.ask) + '</p><h3>' + fmt(C.question) + '</h3>' + choicesHTML(C.choices, 's2') + '<div class="ok-s2-fb" aria-live="polite"></div></div>';
+  if (anim) inView(q);
+}
+function s2Feedback(anim) {
+  var C = CONTENT.s2, ok = state.answers.s2 === C.correct, fb = $('#ok-s2-q .ok-s2-fb');
+  var box = add(fb, '<div class="ok-explain' + (anim ? ' ok-anim-in' : '') + '"><p class="ok-label">' + esc(C.mechLabel) + '</p>' +
+    '<p class="ok-res-title ' + (ok ? 'ok-res-ok' : 'ok-res-ko') + '">' + fmt(ok ? C.okTitle : C.koTitle) + '</p><p>' + fmt(ok ? C.ok : C.ko) + '</p></div>');
+  if (anim) inView(box);
+}
+function s2After(anim) {
+  var C = CONTENT.s2, a = $('#ok-s2-after');
+  var q = add(a, quoteHTML(C.quote, { anim: anim }));
+  if (anim) { inView(q); T(function () { addCTA(a, C.cta, 3, true); }, 500); } else addCTA(a, C.cta, 3, false);
+}
+function chooseS2(i) {
+  if (state.answers.s2 != null) return;
+  state.answers.s2 = i; complete(2);
+  resolveChoices($('#ok-s2-q .ok-choices'), i, CONTENT.s2.correct, true, function () {
+    s2Feedback(true);
+    T(function () { s2After(true); }, 700);
+  });
+}
+
+/* =====================================================================
+   ÉTAPE 3 — JE COMPRENDS L'IDÉE
+   ===================================================================== */
+function fcardInner(c) {
+  return '<div class="ok-fhead"><span class="ok-fnum">' + esc(c.num) + '</span><span class="ok-fic">' + ic(c.icon) + '</span></div><h3>' + fmt(c.title) + '</h3><p>' + fmt(c.text) + '</p>';
+}
+function arrowSVG() { return '<svg viewBox="0 0 36 24" aria-hidden="true"><path class="ok-fl" d="M3 12H31"/><path class="ok-fh" d="M24 5l8 7-8 7"/></svg>'; }
+RENDER[3] = function renderStep3() {
+  var C = CONTENT.s3, S = state.s3, h = '';
+  for (var i = 0; i < 4; i++) {
+    var c = C.cards[i], on = i < S.n;
+    if (i > 0) h += '<div class="ok-farrow' + (i < S.n ? ' is-on' : '') + '" data-a="' + i + '">' + arrowSVG() + '</div>';
+    h += '<div class="ok-slot" data-s="' + i + '"><div class="ok-fcard' + (on ? ' is-on' : ' is-empty') + '" style="--c:' + c.color + '"' + (on ? '' : ' aria-hidden="true"') + '>' + (on ? fcardInner(c) : '') + '</div><div class="ok-slot-act"></div></div>';
+  }
+  stage.innerHTML = titleHTML(C.title) + missionHTML(C.mission) +
+    '<div class="ok-flow' + (S.loop ? ' has-loop' : '') + '" id="ok-flow">' + h + '<svg class="ok-loop-svg" aria-hidden="true"></svg></div>' +
+    '<div class="ok-s3-after" id="ok-s3-after" aria-live="polite"></div>';
+  if (!S.loop) s3PlaceButton(false);
+  else {
+    requestAnimationFrame(function () { drawLoop(false); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (state.step === 3 && state.s3.loop && !busy) drawLoop(false); });
+    s3After(false);
+  }
+};
+function s3PlaceButton(anim) {
+  var C = CONTENT.s3, S = state.s3, slot = $('.ok-slot[data-s="' + (S.n - 1) + '"] .ok-slot-act');
+  if (!slot) return;
+  var html = S.n < 4 ?
+    '<button type="button" class="ok-cta" data-act="s3next">' + esc(C.next) + ic('arrowR') + '</button>' :
+    '<button type="button" class="ok-loopbtn" data-act="s3loop" aria-label="' + esc(C.loopAria) + '"><span class="ok-round">' + ic('refresh') + '</span><span>' + esc(C.loop) + '</span></button>';
+  slot.innerHTML = '<div class="' + (anim ? 'ok-cta-in' : '') + '">' + html + '</div>';
+  if (anim) { T(function () { focusEl(slot.querySelector('button')); inView(slot); }, 60); }
+}
+function s3Next() {
+  var S = state.s3;
+  if (S.n >= 4 || S.loop) return;
+  var cur = $('.ok-slot[data-s="' + (S.n - 1) + '"] .ok-slot-act'); if (cur) cur.innerHTML = '';
+  S.n++;
+  var i = S.n - 1, c = CONTENT.s3.cards[i];
+  var ar = $('.ok-farrow[data-a="' + i + '"]'); if (ar) ar.classList.add('is-on');
+  T(function () {
+    var card = $('.ok-slot[data-s="' + i + '"] .ok-fcard'); if (!card) return;
+    card.classList.remove('is-empty'); card.classList.add('is-on', 'ok-anim-in'); card.removeAttribute('aria-hidden');
+    card.innerHTML = fcardInner(c);
+    T(function () { s3PlaceButton(true); }, 350);
+  }, 600);
+}
+function loopGeom() {
+  var flow = $('#ok-flow'); if (!flow) return null;
+  var fr = flow.getBoundingClientRect();
+  var cards = $$('.ok-fcard', flow).map(function (c) { var r = c.getBoundingClientRect(); return { l: r.left - fr.left, t: r.top - fr.top, r: r.right - fr.left, b: r.bottom - fr.top, w: r.width, h: r.height }; });
+  if (cards.length < 4) return null;
+  var c1 = cards[0], c4 = cards[3], d, head, lab, vert = isMobile();
+  if (!vert) {
+    var y0 = Math.max(c1.b, c4.b) + 6, x1 = c1.l + c1.w / 2, x4 = c4.l + c4.w / 2, dep = 78;
+    d = 'M' + x4 + ' ' + y0 + ' C' + x4 + ' ' + (y0 + dep) + ' ' + x1 + ' ' + (y0 + dep) + ' ' + x1 + ' ' + (y0 + 4);
+    head = 'M' + (x1 - 9) + ' ' + (y0 + 14) + ' L' + x1 + ' ' + (y0 + 3) + ' L' + (x1 + 9) + ' ' + (y0 + 14);
+    lab = { x: (x1 + x4) / 2, y: y0 + dep * 0.75 };
+  } else {
+    var xr = Math.max(c1.r, c4.r) + 4, y1 = c1.t + c1.h / 2, y4 = c4.t + c4.h / 2, out = 40;
+    d = 'M' + xr + ' ' + y4 + ' C' + (xr + out) + ' ' + y4 + ' ' + (xr + out) + ' ' + y1 + ' ' + (xr + 4) + ' ' + y1;
+    head = 'M' + (xr + 15) + ' ' + (y1 - 9) + ' L' + (xr + 4) + ' ' + y1 + ' L' + (xr + 15) + ' ' + (y1 + 9);
+    lab = { x: xr + out * 0.75, y: (y1 + y4) / 2 };
+  }
+  return { d: d, head: head, lab: lab, vert: vert };
+}
+function drawLoop(anim) {
+  var flow = $('#ok-flow'); if (!flow) return;
+  flow.classList.add('has-loop');
+  var g = loopGeom(); if (!g) return;
+  var svg = $('.ok-loop-svg', flow);
+  svg.innerHTML = '<path class="ok-loop-p" d="' + g.d + '"/><path class="ok-loop-h" d="' + g.head + '"/>';
+  var old = $('.ok-loop-label', flow); if (old) old.remove();
+  var lab = add(flow, '<span class="ok-loop-label' + (g.vert ? ' is-vert' : '') + '" style="left:' + g.lab.x + 'px;top:' + g.lab.y + 'px">' + esc(CONTENT.s3.loopLabel) + '</span>');
+  if (anim && !reduced()) {
+    var p = $('.ok-loop-p', svg), hd = $('.ok-loop-h', svg), L = p.getTotalLength();
+    p.style.strokeDasharray = L; p.style.strokeDashoffset = L; hd.style.opacity = 0; lab.style.opacity = 0;
+    p.getBoundingClientRect();
+    p.style.transition = 'stroke-dashoffset .9s cubic-bezier(.22,1,.36,1)'; p.style.strokeDashoffset = 0;
+    hd.style.transition = 'opacity .25s .85s'; hd.style.opacity = 1;
+    lab.style.transition = 'opacity .4s .5s'; lab.style.opacity = 1;
+  }
+}
+function s3Loop() {
+  var S = state.s3;
+  if (S.n < 4 || S.loop) return;
+  S.loop = true; complete(3);
+  var slot = $('.ok-slot[data-s="3"] .ok-slot-act'); if (slot) slot.innerHTML = '';
+  T(function () { drawLoop(true); }, 50);
+  $$('.ok-fcard').forEach(function (c, i) { T(function () { restart(c, 'ok-flash'); }, 1000 + i * 220); });
+  T(function () { s3After(true); }, 2000);
+}
+function s3After(anim) {
+  var C = CONTENT.s3, a = $('#ok-s3-after'); if (!a) return;
+  var A = anim ? ' ok-anim-in' : '';
+  var w = add(a, '<div class="ok-warnbox' + A + '">' + ic('warn') + '<p>' + fmt(C.warn) + '</p></div>', 0);
+  add(a, '<div class="ok-whitecard' + A + '"><p class="ok-label">' + esc(C.defLabel) + '</p><p>' + fmt(C.def) + '</p></div>', 150);
+  add(a, '<div class="ok-quotes2' + A + '">' + quoteHTML(C.quotes[0]) + quoteHTML(C.quotes[1]) + '</div>', 300);
+  if (anim) { inView(w); T(function () { addCTA(a, C.cta, 4, true); }, 750); } else addCTA(a, C.cta, 4, false);
+}
+
+/* =====================================================================
+   ÉTAPE 4 — JE VOIS LE MÉCANISME (fumée -> triangle)
+   ===================================================================== */
+function wrapWords(s, max) {
+  var words = String(s).split(' '), lines = [], cur = '';
+  words.forEach(function (w) { if (cur && (cur + ' ' + w).length > max) { lines.push(cur); cur = w; } else cur = cur ? cur + ' ' + w : w; });
+  if (cur) lines.push(cur);
+  return lines;
+}
+var triMode = null;
+function triLayout() {
+  var frame = $('#ok-triframe'), w = frame ? frame.clientWidth : 800;
+  if (w >= 560) return { mode: 'wide', W: 800, H: 500, fs: 20, lfs: 26, me: { x: 120, y: 386, r: 50 }, ob: { x: 680, y: 386, r: 50 }, ot: { x: 400, y: 122, r: 50 }, smokeH: 300, wrapQ: 60, wrapS: 30, pic: 1.5 };
+  return { mode: 'narrow', W: 340, H: 490, fs: 15, lfs: 20, me: { x: 50, y: 404, r: 36 }, ob: { x: 290, y: 404, r: 36 }, ot: { x: 170, y: 132, r: 36 }, smokeH: 318, wrapQ: 21, wrapS: 7, pic: 1.08 };
+}
+function textLines(lines, x, y, anchor, fs, cls, lh, up) {
+  var off = up ? -(lines.length - 1) * lh : 0;
+  return '<text class="' + (cls || '') + '" x="' + x + '" y="' + (y + off) + '" text-anchor="' + anchor + '" font-size="' + fs + '" font-weight="800">' +
+    lines.map(function (l, i) { return '<tspan x="' + x + '" dy="' + (i ? lh : 0) + '">' + esc(plain(l)) + '</tspan>'; }).join('') + '</text>';
+}
+function seg(a, b, ra, rb) {
+  var dx = b.x - a.x, dy = b.y - a.y, L = Math.sqrt(dx * dx + dy * dy), ux = dx / L, uy = dy / L;
+  var s = { x: a.x + ux * (ra + 8), y: a.y + uy * (ra + 8) }, e = { x: b.x - ux * (rb + 16), y: b.y - uy * (rb + 16) };
+  var tip = { x: e.x + ux * 11, y: e.y + uy * 11 }, px = -uy, py = ux;
+  var head = (e.x + px * 8) + ',' + (e.y + py * 8) + ' ' + tip.x + ',' + tip.y + ' ' + (e.x - px * 8) + ',' + (e.y - py * 8);
+  var len = Math.sqrt(Math.pow(e.x - s.x, 2) + Math.pow(e.y - s.y, 2));
+  return { d: 'M' + s.x + ' ' + s.y + ' L' + e.x + ' ' + e.y, head: head, len: Math.ceil(len) + 2, mid: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 } };
+}
+function picto(kind, c, s) {
+  var g = {
+    me: '<circle cx="22" cy="12" r="7"/><path d="M8 38c0-9 6-15 14-15s14 6 14 15"/><path d="M29 10.5l4.5 2-4.5 2"/>',
+    other: '<circle cx="15" cy="11" r="6.5"/><path d="M3 38c0-9 5-14 12-14s12 5 12 14"/><rect x="25" y="23" width="12" height="13" rx="2" fill="#F5C518" stroke="#F5C518"/><path d="M28 23v-3a3 3 0 0 1 6 0v3"/>',
+    shoe: '<path d="M3 29h34v-3c0-3-3-5-8-6l-6-6-3 2-4-4H3z"/><path d="M3 29v4h34v-4"/><path d="M15 14l3 3M19 13l3 3"/>'
+  }[kind];
+  return '<g transform="translate(' + (c.x - 20 * s) + ' ' + (c.y - 20 * s) + ') scale(' + s + ')" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' + g + '</g>';
+}
+function cloud(cx, cy, r, fill) {
+  return '<g fill="' + fill + '"><circle cx="' + (cx - r * .9) + '" cy="' + (cy + r * .15) + '" r="' + (r * .7) + '"/><circle cx="' + cx + '" cy="' + (cy - r * .25) + '" r="' + r + '"/><circle cx="' + (cx + r * .95) + '" cy="' + (cy + r * .1) + '" r="' + (r * .75) + '"/><ellipse cx="' + cx + '" cy="' + (cy + r * .45) + '" rx="' + (r * 1.7) + '" ry="' + (r * .5) + '"/></g>';
+}
+function buildTri(phase) {
+  var C = CONTENT.s4, L = triLayout(); triMode = L.mode;
+  var W = L.W, H = L.H, me = L.me, ob = L.ob, ot = L.ot, fs = L.fs, lh = fs * 1.25;
+  var look = seg(me, ot, me.r, ot.r), want = seg(ot, ob, ot.r, ob.r);
+  var bx1 = me.x + me.r + 8, bx2 = ob.x - ob.r - 16, by = me.y;
+  var midX = (me.x + ob.x) / 2;
+  /* billet + « ? » */
+  var bw = L.mode === 'wide' ? 46 : 38, bh = L.mode === 'wide' ? 28 : 24, billX = midX - bw - 10, billY = by + 18;
+  var qx = midX + 20, qy = billY + bh - 2;
+  /* fumée */
+  var sm = '', cols = ['#7D8AC4', '#97A3D6', '#8692CC'], n = 7;
+  for (var i = 0; i < n; i++) {
+    var cx = W * (i + .5) / n, part = i < 2 ? 'l' : i > 4 ? 'r' : 'c';
+    sm += '<g class="ok-smoke-g ok-smoke-' + part + '"><g class="ok-smoke-w' + (i % 2 ? ' w2' : '') + '"><ellipse cx="' + cx + '" cy="' + (L.smokeH * (.42 + (i % 3) * .08)) + '" rx="' + (W / n * 1.25) + '" ry="' + (L.smokeH * .46) + '" fill="' + cols[i % 3] + '"/></g></g>';
+  }
+  sm = '<g class="ok-smoke-all" filter="url(#ok-blur)"><g class="ok-smoke-g ok-smoke-c"><rect x="-20" y="-20" width="' + (W + 40) + '" height="' + (L.smokeH * .62) + '" fill="#8C98CF"/></g>' + sm + '</g>';
+  var bx = (W / 2 - qx), byy = (L.smokeH * .45 - qy);
+  var qLines = L.mode === 'wide' ? [C.question] : wrapWords(C.question, L.wrapQ);
+  var aLines = L.mode === 'wide' ? [C.answer] : wrapWords(C.answer, 16);
+  var lookLines = wrapWords(C.look, L.wrapS), wantLines = wrapWords(C.wants, L.wrapS);
+  var sideDX = L.mode === 'wide' ? 18 : 16;
+  var eyeS = L.mode === 'wide' ? 1.3 : 1;
+  var eyeX = look.mid.x - sideDX - (L.mode === 'wide' ? 60 : 30), eyeY = look.mid.y - (L.mode === 'wide' ? 52 : 46);
+  var cls = 'ok-tri'; for (var k = 1; k <= Math.min(phase, 6); k++) cls += ' is-p' + k;
+  var svg = '<svg class="' + cls + ' ok-noanim" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(phase >= 6 ? C.svgAriaDone : C.svgAria) + '">' +
+    '<defs><filter id="ok-blur" x="-20%" y="-30%" width="140%" height="160%"><feGaussianBlur stdDeviation="' + (L.mode === 'wide' ? 12 : 9) + '"/></filter>' +
+    '<filter id="ok-blur2" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.2"/></filter>' +
+    '<mask id="ok-m-want" maskUnits="userSpaceOnUse" x="0" y="0" width="' + W + '" height="' + H + '"><path class="ok-mk ok-mk-want" d="' + want.d + '" stroke-width="16" style="--len:' + want.len + '"/></mask>' +
+    '<mask id="ok-m-look" maskUnits="userSpaceOnUse" x="0" y="0" width="' + W + '" height="' + H + '"><path class="ok-mk ok-mk-look" d="' + look.d + '" stroke-width="16" style="--len:' + look.len + '"/></mask></defs>' +
+    /* label triangle */
+    '<text class="ok-tt ok-tri-label" x="' + (L.mode === 'wide' ? 26 : 14) + '" y="' + (L.mode === 'wide' ? 44 : 32) + '" font-size="' + (L.mode === 'wide' ? 26 : 19) + '" style="fill:#F5C518">' + esc(C.triangle) + '</text>' +
+    /* lignes du triangle */
+    '<path d="' + want.d + '" mask="url(#ok-m-want)" stroke="#fff" stroke-width="3" stroke-dasharray="8 8" fill="none" stroke-linecap="round"/>' +
+    '<polygon class="ok-x-want" points="' + want.head + '" fill="#fff"/>' +
+    textLines(wantLines, want.mid.x + sideDX, want.mid.y, 'start', fs, 'ok-x-want', lh) +
+    '<path d="' + look.d + '" mask="url(#ok-m-look)" stroke="#F5C518" stroke-width="3.5" fill="none" stroke-linecap="round"/>' +
+    '<polygon class="ok-x-look" points="' + look.head + '" fill="#F5C518"/>' +
+    textLines(lookLines, look.mid.x - sideDX, look.mid.y, 'end', fs, 'ok-x-look', lh) +
+    '<g class="ok-x-look" transform="translate(' + eyeX + ' ' + eyeY + ') scale(' + eyeS + ')" fill="none" stroke="#F5C518" stroke-width="2" stroke-linecap="round"><path d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></g>' +
+    /* flèche du bas */
+    '<path d="M' + bx1 + ' ' + by + ' L' + (bx2 - 4) + ' ' + by + '" stroke="#fff" stroke-width="3" stroke-dasharray="8 8" stroke-linecap="round" fill="none"/>' +
+    '<polygon points="' + (bx2 - 10) + ',' + (by - 8) + ' ' + (bx2 + 4) + ',' + by + ' ' + (bx2 - 10) + ',' + (by + 8) + '" fill="#fff"/>' +
+    textLines(qLines, midX, by - 16, 'middle', fs, 'ok-q-txt', lh, true) +
+    textLines(aLines, midX, by - 16, 'middle', fs, 'ok-a-txt', lh, true) +
+    '<g><rect x="' + billX + '" y="' + billY + '" width="' + bw + '" height="' + bh + '" rx="4" fill="#3FAE78" stroke="#BDF2D6" stroke-width="2"/>' +
+    '<text x="' + (billX + bw / 2) + '" y="' + (billY + bh * .72) + '" text-anchor="middle" font-size="' + (bh * .7) + '" font-weight="900">€</text></g>' +
+    '<text class="ok-qmark" x="' + qx + '" y="' + qy + '" font-size="' + (bh * 1.25) + '" font-weight="900" style="fill:#F5C518">?</text>' +
+    /* ronds */
+    '<g><circle cx="' + me.x + '" cy="' + me.y + '" r="' + me.r + '" fill="rgba(255,255,255,.1)" stroke="#fff" stroke-width="2.5"/>' + picto('me', me, L.pic) +
+    '<text class="ok-tt" x="' + me.x + '" y="' + (me.y + me.r + L.lfs + 2) + '" text-anchor="middle" font-size="' + L.lfs + '">' + esc(plain(C.me)) + '</text></g>' +
+    '<g><circle cx="' + ob.x + '" cy="' + ob.y + '" r="' + ob.r + '" fill="rgba(255,255,255,.1)" stroke="#fff" stroke-width="2.5"/>' + picto('shoe', ob, L.pic) +
+    '<text class="ok-tt" x="' + ob.x + '" y="' + (ob.y + ob.r + L.lfs + 2) + '" text-anchor="middle" font-size="' + L.lfs + '">' + esc(plain(C.object)) + '</text></g>' +
+    '<g class="ok-autre"><circle cx="' + ot.x + '" cy="' + ot.y + '" r="' + ot.r + '" fill="rgba(245,197,24,.14)" stroke="#F5C518" stroke-width="3"/>' + picto('other', ot, L.pic) +
+    '<text class="ok-tt" x="' + ot.x + '" y="' + (ot.y - ot.r - 12) + '" text-anchor="middle" font-size="' + L.lfs + '" style="fill:#F5C518">' + esc(plain(C.other)) + '</text></g>' +
+    /* fumée + buée */
+    sm +
+    '<g class="ok-buee" style="--bx:' + bx + 'px;--by:' + byy + 'px" filter="url(#ok-blur2)">' + cloud(qx + bh * .32, qy - bh * .4, bh * .55, 'rgba(200,208,238,.92)') + '</g>' +
+    '</svg>';
+  return { svg: svg, smokeTop: (L.smokeH * .45 / H) * 100 };
+}
+RENDER[4] = function renderStep4() {
+  var C = CONTENT.s4, S = state.s4;
+  if (S.phase > 0 && S.phase < 7) S.phase = 7; /* animation interrompue : état final */
+  stage.innerHTML = titleHTML(C.title) + missionHTML(C.mission) +
+    '<div class="ok-triframe" id="ok-triframe"><div id="ok-tri-holder"></div></div><div id="ok-s4-after" aria-live="polite"></div>';
+  mountTri();
+  if (S.phase === 0) {
+    add($('#ok-triframe'), '<button type="button" class="ok-smoke-btn" data-act="s4clear" style="top:' + buildTri(0).smokeTop + '%">' + ic('wind') + esc(C.clear) + '</button>');
+  } else s4After(false);
+};
+function mountTri() {
+  var h = $('#ok-tri-holder'); if (!h) return;
+  h.innerHTML = buildTri(state.s4.phase).svg;
+  var svg = $('.ok-tri', h);
+  requestAnimationFrame(function () { requestAnimationFrame(function () { if (svg.isConnected) svg.classList.remove('ok-noanim'); }); });
+}
+function s4Clear() {
+  var S = state.s4;
+  if (S.phase > 0) return;
+  complete(4);
+  var btn = $('.ok-smoke-btn');
+  if (btn) { btn.classList.add('ok-fade-out'); T(function () { if (btn.isConnected) btn.remove(); }, 300); }
+  function setP(k) {
+    S.phase = k;
+    var svg = $('.ok-tri'); if (svg) svg.classList.add('is-p' + k);
+    if (k === 6 && svg) svg.setAttribute('aria-label', CONTENT.s4.svgAriaDone);
+  }
+  setP(1);
+  [2, 3, 4, 5, 6].forEach(function (k, i) { T(function () { setP(k); }, 1100 + i * 700); });
+  T(function () { S.phase = 7; s4After(true); }, 1100 + 5 * 700 + 300);
+}
+function s4After(anim) {
+  var C = CONTENT.s4, a = $('#ok-s4-after'); if (!a) return;
+  var A = anim ? ' ok-anim-in' : '';
+  var idea = add(a, '<div class="ok-idea' + A + '"><div class="ok-idea-head"><span class="ok-sq">' + ic('bulb') + '</span><span class="ok-label">' + esc(C.ideaLabel) + '</span></div>' +
+    '<p class="ok-idea-txt">' + fmt(C.idea) + '</p><hr><p class="ok-label ok-label-y">' + esc(C.retainLabel) + '</p><p class="ok-retain">' + fmt(C.retain) + '</p></div>');
+  add(a, quoteHTML(C.quote, { anim: anim, d: 200 }));
+  if (anim) { inView(idea); T(function () { addCTA(a, C.cta, 5, true); }, 650); } else addCTA(a, C.cta, 5, false);
+}
+
+/* =====================================================================
+   ÉTAPE 5 — JE REPÈRE
+   ===================================================================== */
+function s5Answered() { var n = 0; for (var r = 0; r < 5; r++) if (state.answers['s5-' + r] != null) n++; return n; }
+RENDER[5] = function renderStep5() {
+  var C = CONTENT.s5, S = state.s5;
+  var badges = C.indices.map(function (d, i) {
+    var lit = false;
+    C.rounds.forEach(function (r, ri) { if (r.answer === i && state.answers['s5-' + ri] != null) lit = true; });
+    return '<div class="ok-badge' + (lit ? ' is-lit' : '') + '" data-b="' + i + '" style="--c:' + d.color + '"><span class="ok-bic">' + ic(d.icon) + '</span>' + esc(d.name) + '</div>';
+  }).join('');
+  stage.innerHTML = titleHTML(C.title) + '<p class="ok-subcaps">' + esc(C.subtitle) + '</p>' + missionHTML(C.mission, false) +
+    '<div class="ok-desire"><span>' + ic('heart') + esc(C.desire) + '</span></div>' +
+    '<div class="ok-badges" aria-label="' + esc(C.subtitle) + '">' + badges + '</div>' +
+    '<div id="ok-s5-zone"></div>';
+  if (S.finished) s5End(false); else s5Round(false);
+};
+function s5Round(anim) {
+  var C = CONTENT.s5, r = state.s5.round, R = C.rounds[r], zone = $('#ok-s5-zone'); if (!zone) return;
+  var answered = s5Answered();
+  zone.innerHTML = '<div class="ok-minibar"><span class="ok-label">' + esc(tpl(C.round, { n: r + 1 })) + '</span><div class="ok-mb-track"><div class="ok-mb-fill" style="width:' + (answered / 5 * 100) + '%"></div></div>' +
+    '<span class="ok-mb-score" aria-live="polite">' + state.score5 + ' / 5</span></div><div class="ok-round' + (anim ? ' ok-swap-in' : '') + '" id="ok-round">' +
+    '<div class="ok-situation"><p class="ok-sit-head"><span class="ok-sq">' + ic('doc') + '</span>' + esc(tpl(C.situation, { p: R.place })) + '</p><p class="ok-sit-text">« ' + fmt(R.text) + ' »</p></div>' +
+    '<p class="ok-ask">' + fmt(C.ask) + '</p><div class="ok-pills" role="group">' +
+    C.indices.map(function (d, i) {
+      return '<button type="button" class="ok-pill ok-opt" data-act="choose" data-group="s5" data-i="' + i + '" style="--c:' + d.color + '">' + ic(d.icon) + '<span>' + esc(d.name) + '</span><span class="ok-mark" aria-hidden="true"></span><span class="ok-sr ok-state"></span></button>';
+    }).join('') + '</div><div class="ok-s5-fb" aria-live="polite"></div></div>';
+  var ans = state.answers['s5-' + r];
+  if (ans != null) { resolveChoices($('#ok-round .ok-pills'), ans, R.answer, false); s5Feedback(false); }
+}
+function chooseS5(i) {
+  var r = state.s5.round, key = 's5-' + r, C = CONTENT.s5, R = C.rounds[r];
+  if (state.answers[key] != null || state.s5.finished) return;
+  state.answers[key] = i;
+  if (i === R.answer) state.score5++;
+  resolveChoices($('#ok-round .ok-pills'), i, R.answer, true, function () {
+    var b = $('.ok-badge[data-b="' + R.answer + '"]'); if (b) { b.classList.add('is-lit'); restart(b, 'ok-pop'); }
+    var f = $('.ok-mb-fill'); if (f) f.style.width = (s5Answered() / 5 * 100) + '%';
+    var sc = $('.ok-mb-score'); if (sc) { sc.textContent = state.score5 + ' / 5'; if (i === R.answer) restart(sc, 'ok-pop'); }
+    s5Feedback(true);
+  });
+}
+function s5Feedback(anim) {
+  var C = CONTENT.s5, r = state.s5.round, R = C.rounds[r], ans = state.answers['s5-' + r], ok = ans === R.answer, fb = $('#ok-round .ok-s5-fb'); if (!fb) return;
+  var title = ok ? C.okTitle : tpl(C.koTitle, { name: C.indices[R.answer].name.toUpperCase() });
+  var box = add(fb, '<div class="ok-verdict' + (anim ? ' ok-anim-in' : '') + '"><p class="ok-verdict-h">' + ic('search') + fmt(title) + '</p><p>' + fmt(R.expl) + '</p>' +
+    '<p class="ok-def"><b>' + fmt(C.defLabel) + '</b> ' + fmt(R.def) + '</p></div>');
+  var w = add(fb, ctaHTML(r < 4 ? C.nextRound : C.seeResult, null, anim, 's5next'));
+  if (anim) { inView(box); T(function () { focusEl(w.querySelector('button')); inView(w); }, 300); }
+}
+function s5Next() {
+  var S = state.s5;
+  if (state.answers['s5-' + S.round] == null || S.finished) return;
+  var rd = $('#ok-round');
+  if (S.round < 4) {
+    S.round++;
+    if (rd) rd.classList.add('ok-swap-out');
+    T(function () { s5Round(true); var z = $('#ok-s5-zone'); if (z) inView(z.firstElementChild); focusEl($('#ok-round .ok-pill')); }, 300);
+  } else {
+    S.finished = true; complete(5);
+    var z = $('#ok-s5-zone'); if (z) z.classList.add('ok-swap-out');
+    T(function () { if (z) z.classList.remove('ok-swap-out'); s5End(true); }, 300);
+  }
+}
+function s5End(anim) {
+  var C = CONTENT.s5, z = $('#ok-s5-zone'); if (!z) return;
+  var sc = state.score5, A = anim ? ' ok-anim-in' : '';
+  z.innerHTML = '<div class="ok-endhead' + A + '"><div class="ok-endsq' + (anim ? ' ok-pop-in' : '') + '">' + ic('search') + '</div><p class="ok-label">' + esc(C.endLabel) + '</p>' +
+    '<p class="ok-endtitle">' + fmt(sc >= 3 ? C.endGood : C.endBad) + '</p><p class="ok-endscore">' + fmt(tpl(C.endScore, { n: sc })) + '</p>' +
+    '<p class="ok-label ok-label-y" style="margin-top:28px">' + esc(C.gridLabel) + '</p><p class="ok-grid-title">' + esc(C.gridTitle) + '</p></div>' +
+    '<div class="ok-icards">' + C.indices.map(function (d, i) {
+      return '<div class="ok-icard' + A + '" style="--c:' + d.color + ';--d:' + (300 + i * 120) + 'ms"><span class="ok-bic">' + ic(d.icon) + '</span><div><h4>' + esc(d.caps) + '</h4><p>' + fmt(d.def) + '</p></div></div>';
+    }).join('') + '</div>';
+  if (anim) { inView(z.firstElementChild); T(function () { addCTA(z, C.cta, 6, true); }, 1000); } else addCTA(z, C.cta, 6, false);
+}
+
+/* =====================================================================
+   ÉTAPE 6 — J'ENQUÊTE
+   ===================================================================== */
+RENDER[6] = function renderStep6() {
+  var C = CONTENT.s6;
+  stage.innerHTML = titleHTML(C.title) + '<div class="ok-s6-bar" aria-hidden="true"><div style="width:' + ((state.s6.idx + 1) / 3 * 100) + '%"></div></div><div class="ok-case-wrap" id="ok-case-wrap"></div>';
+  s6Case(false);
+};
+function s6Case(anim) {
+  var C = CONTENT.s6, i = state.s6.idx, K = C.cases[i], w = $('#ok-case-wrap'); if (!w) return;
+  w.innerHTML = '<article class="ok-case' + (anim ? ' ok-swap-in' : '') + '" id="ok-case" aria-label="' + esc(tpl(C.caseLabel, { n: i + 1 })) + '">' +
+    '<div class="ok-case-head"><span class="ok-sq-y">' + ic('flag') + '</span><span class="ok-label ok-label-y">' + esc(tpl(C.caseLabel, { n: i + 1 })) + '</span></div>' +
+    '<h3 class="ok-case-title">' + fmt(K.title) + '</h3>' +
+    '<div class="ok-case-ctx"><p>' + fmt(K.context) + '</p><hr><p class="ok-case-q">' + fmt(K.question) + '</p></div>' +
+    '<div class="ok-case-video"><p class="ok-vid-title">' + esc(K.video.title) + (K.video.channel ? ' <span style="font-weight:600;opacity:.75">(' + esc(K.video.channel) + ')</span>' : '') + '</p>' +
+    '<p class="ok-observe">' + ic('eye') + '<span><strong>' + fmt(C.observe) + '</strong> ' + fmt(K.observe) + '</span></p>' + videoHTML(K.video) + '</div>' +
+    choicesHTML(K.choices.map(function (c) { return c.t; }), 's6', true) +
+    '<div class="ok-case-fb" aria-live="polite"></div></article>';
+  var ans = state.answers['s6-' + i];
+  if (ans != null) { resolveChoices($('#ok-case .ok-choices'), ans, K.correct, false); s6Feedback(false); }
+}
+function chooseS6(j) {
+  var i = state.s6.idx, key = 's6-' + i, K = CONTENT.s6.cases[i];
+  if (state.answers[key] != null) return;
+  state.answers[key] = j;
+  if (i === 2) complete(6);
+  resolveChoices($('#ok-case .ok-choices'), j, K.correct, true, function () { s6Feedback(true); });
+}
+function s6Feedback(anim) {
+  var C = CONTENT.s6, i = state.s6.idx, K = C.cases[i], j = state.answers['s6-' + i], fb = $('#ok-case .ok-case-fb'); if (!fb) return;
+  var A = anim ? ' ok-anim-in' : '';
+  var v = add(fb, '<div class="ok-verdict' + A + '"><p class="ok-verdict-h">' + ic('bulb') + esc(C.verdict) + '</p><p>' + fmt(K.choices[j].v) + '</p></div>');
+  add(fb, '<p class="ok-capsule' + A + '" style="--d:200ms">' + ic('bulb') + '<span>' + fmt(K.summary) + '</span></p>');
+  var last = i === 2;
+  var w = add(fb, last ? ctaHTML(C.last, 7, anim) : ctaHTML(C.next, null, anim, 's6next'));
+  if (anim) { inView(v); T(function () { focusEl(w.querySelector('button')); inView(w); }, 450); }
+}
+function s6Next() {
+  var S = state.s6;
+  if (S.idx >= 2 || state.answers['s6-' + S.idx] == null) return;
+  S.idx++;
+  var c = $('#ok-case'); if (c) c.classList.add('ok-swap-out');
+  var bar = $('.ok-s6-bar div'); if (bar) bar.style.width = ((S.idx + 1) / 3 * 100) + '%';
+  T(function () { s6Case(true); var t = $('.ok-title'); if (t) t.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' }); focusEl($('#ok-case .ok-case-title')); }, 300);
+}
+
+/* =====================================================================
+   ÉTAPE 7 — JE SAIS L'UTILISER
+   ===================================================================== */
+RENDER[7] = function renderStep7() {
+  var p = state.s7.phase;
+  if (p === 'words') s7Words(); else if (p === 'quiz') s7Quiz(); else if (p === 'end') s7End(false); else s7Quote(false);
+};
+function s7Words() {
+  var C = CONTENT.s7;
+  stage.innerHTML = titleHTML(C.wordsTitle) + '<p class="ok-mission">' + fmt(C.wordsSub) + '</p>' +
+    '<div class="ok-words">' + C.words.map(function (w) {
+      return '<div class="ok-word" style="--c:' + w.color + '"><div class="ok-word-h"><span class="ok-sq">' + ic(w.icon) + '</span><h3>' + esc(w.name) + '</h3></div><p>' + fmt(w.text) + '</p></div>';
+    }).join('') + '</div>' + ctaHTML(C.play, null, false, 's7play');
+}
+function s7SetPhase(p) { swapStage(function () { state.s7.phase = p; RENDER[7](); }, 'fwd'); }
+function s7Quiz() {
+  var C = CONTENT.s7;
+  stage.innerHTML = titleHTML(C.title) + missionHTML(C.mission, false) +
+    '<div class="ok-quiz"><aside class="ok-xp" aria-label="' + esc(tpl(C.xpAria, { v: state.xp })) + '"><span class="ok-xp-lbl">' + esc(C.xp) + '</span>' +
+    '<div class="ok-xp-track"><div class="ok-xp-fill" style="transform:scaleY(' + (state.xp / 30) + ')"></div></div>' +
+    '<span class="ok-xp-val">' + state.xp + '</span><span class="ok-xp-flame">' + ic('flame') + '</span></aside><div id="ok-qmain"></div></div>';
+  s7Question(false);
+}
+function s7Question(anim) {
+  var C = CONTENT.s7, n = state.s7.q, Q = C.questions[n], m = $('#ok-qmain'); if (!m) return;
+  m.innerHTML = '<div class="' + (anim ? 'ok-swap-in' : '') + '" id="ok-qbox"><p class="ok-label ok-qnum">' + esc(tpl(C.qnum, { n: n + 1 })) + ' · <span>' + esc(Q.cat) + '</span></p>' +
+    '<div class="ok-qrow"><div class="ok-qcube">' + cubeSVG() + '</div><p class="ok-qbubble">' + fmt(Q.q) + '</p></div>' +
+    choicesHTML(Q.choices.map(function (c) { return c.t; }), 's7') + '<div class="ok-q-fb" aria-live="polite"></div></div>';
+  var ans = state.answers['s7-' + n];
+  if (ans != null) { resolveChoices($('#ok-qbox .ok-choices'), ans, Q.correct, false); s7Feedback(false); }
+}
+function chooseS7(j) {
+  var n = state.s7.q, key = 's7-' + n, Q = CONTENT.s7.questions[n];
+  if (state.answers[key] != null) return;
+  state.answers[key] = j;
+  var ok = j === Q.correct, from = state.xp;
+  if (ok) state.xp += 10;
+  resolveChoices($('#ok-qbox .ok-choices'), j, Q.correct, true, function () {
+    if (ok) {
+      var f = $('.ok-xp-fill'); if (f) f.style.transform = 'scaleY(' + (state.xp / 30) + ')';
+      countTo($('.ok-xp-val'), from, state.xp, 600);
+      var xpbox = $('.ok-xp'); if (xpbox) xpbox.setAttribute('aria-label', tpl(CONTENT.s7.xpAria, { v: state.xp }));
+    }
+    s7Feedback(true);
+  });
+}
+function s7Feedback(anim) {
+  var C = CONTENT.s7, n = state.s7.q, Q = C.questions[n], j = state.answers['s7-' + n], ok = j === Q.correct, fb = $('#ok-qbox .ok-q-fb'); if (!fb) return;
+  var row = add(fb, '<div class="ok-q-fbrow' + (anim ? ' ok-anim-in' : '') + '"><div class="ok-qfb ' + (ok ? 'is-ok' : 'is-ko') + '"><h4>' + ic(ok ? 'check' : 'x') + esc(ok ? C.okTitle : C.koTitle) + '</h4><p>' + fmt(Q.choices[j].v) + '</p></div>' +
+    '<button type="button" class="ok-qnext" data-act="s7next">' + esc(n < 2 ? C.next : C.result) + ic('arrowR') + '</button></div>');
+  if (anim) { inView(row); T(function () { focusEl(row.querySelector('button')); }, 300); }
+}
+function s7Next() {
+  var S = state.s7;
+  if (state.answers['s7-' + S.q] == null) return;
+  if (S.q < 2) {
+    S.q++;
+    var b = $('#ok-qbox'); if (b) b.classList.add('ok-swap-out');
+    T(function () { s7Question(true); inView($('#ok-qmain')); focusEl($('#ok-qbox .ok-choice')); }, 300);
+  } else {
+    complete(7);
+    if (!state.endTime) state.endTime = Date.now();
+    swapStage(function () { state.s7.phase = 'end'; s7End(true); }, 'fwd');
+  }
+}
+function s7End(anim) {
+  var C = CONTENT.s7;
+  var mins = Math.max(1, Math.round(((state.endTime || Date.now()) - state.startTime) / 60000));
+  stage.innerHTML = '<div class="ok-bravo"><div class="ok-trophy' + (anim ? ' ok-endsq ok-pop-in' : '') + '">' + ic('trophy') + '</div>' +
+    '<h2 class="ok-bravo-t" tabindex="-1">' + fmt(C.bravo) + '</h2><p class="ok-unlock">' + esc(C.unlock) + '</p><p class="ok-level">' + esc(C.level) + '</p>' +
+    '<div class="ok-stats"><div class="ok-stat"><b>' + esc(C.stepsValue) + '</b><span>' + esc(C.statSteps) + '</span></div>' +
+    '<div class="ok-stat"><b><span class="ok-cnt" data-to="' + mins + '">' + (anim ? 0 : mins) + '</span><small>' + esc(C.minUnit) + '</small></b><span>' + esc(C.statTime) + '</span></div>' +
+    '<div class="ok-stat"><b><span class="ok-cnt" data-to="' + state.xp + '">' + (anim ? 0 : state.xp) + '</span></b><span>' + esc(C.statXp) + '</span></div></div></div>' +
+    ctaHTML(C.quoteCta, null, anim, 's7quote');
+  if (anim) {
+    $$('.ok-cnt').forEach(function (el) { countTo(el, 0, +el.getAttribute('data-to'), 900); });
+    T(function () { openBubble(C.mascotEnd); }, 900);
+  }
+}
+function s7Quote(anim) {
+  var C = CONTENT.s7;
+  stage.innerHTML = '<h2 class="ok-sr ok-title" tabindex="-1">' + esc(C.quoteLabel) + '</h2>' +
+    '<div style="padding-top:5vh">' + quoteHTML(C.quote, { center: true, label: C.quoteLabel, anim: anim }) + '</div>' + ctaHTML(C.cta, 8, anim);
+}
+
+/* =====================================================================
+   ÉTAPE 8 — JE VAIS PLUS LOIN (fond clair)
+   ===================================================================== */
+function coverSVG(B) {
+  return '<svg class="ok-cover" viewBox="0 0 200 290" role="img" aria-label="' + esc(B.coverAria) + '">' +
+    '<defs><linearGradient id="ok-cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22339F"/><stop offset="1" stop-color="#0A1260"/></linearGradient></defs>' +
+    '<rect width="200" height="290" rx="8" fill="url(#ok-cg)"/><rect x="0" y="0" width="12" height="290" rx="4" fill="rgba(0,0,0,.28)"/><rect x="12" y="0" width="2" height="290" fill="rgba(255,255,255,.12)"/>' +
+    '<rect x="30" y="26" width="146" height="22" rx="4" fill="#F5C518"/><text x="103" y="41.5" text-anchor="middle" font-family="Nunito,system-ui,sans-serif" font-weight="900" font-size="9.5" letter-spacing=".8" fill="#0B1550">' + esc(B.coverBand) + '</text>' +
+    B.coverTitle.map(function (t, i) { return '<text x="103" y="' + (128 + i * 34) + '" text-anchor="middle" font-family="\'Bebas Neue\',Anton,Impact,sans-serif" font-size="' + (t.length > 8 ? 30 : 26) + '" fill="#fff" letter-spacing="1">' + esc(t) + '</text>'; }).join('') +
+    '<rect x="66" y="232" width="74" height="2" fill="#F5C518"/><text x="103" y="256" text-anchor="middle" font-family="Nunito,system-ui,sans-serif" font-weight="800" font-size="11" letter-spacing="1.6" fill="#fff">' + esc(B.coverAuthor) + '</text></svg>';
+}
+RENDER[8] = function renderStep8() {
+  var C = CONTENT.s8, B = C.book, V = C.video;
+  stage.innerHTML = '<p class="ok-label ok-s8-kicker">' + esc(C.kicker) + '</p><h2 class="ok-s8-title ok-title" tabindex="-1" style="color:var(--navy);text-shadow:none">' + esc(C.title) + '</h2><p class="ok-s8-sub">' + fmt(C.sub) + '</p>' +
+    '<div class="ok-s8-grid">' +
+    '<article class="ok-s8-card"><div class="ok-cover-wrap">' + coverSVG(B) + '</div>' +
+    '<span class="ok-chip">' + ic('book') + esc(B.chip) + '</span><h3 class="ok-s8-h">' + esc(B.title) + '</h3><p class="ok-s8-meta">' + esc(B.meta) + '</p>' +
+    '<p class="ok-hook">' + fmt(B.hook) + '</p>' +
+    '<p class="ok-s8-p"><b>' + fmt(B.beforeLabel) + '</b> ' + fmt(B.before) + '</p>' +
+    '<p class="ok-s8-p"><b>' + fmt(B.summaryLabel) + '</b> ' + fmt(B.summary) + '</p>' +
+    '<p class="ok-s8-p"><b>' + fmt(B.whyLabel) + '</b> ' + fmt(B.why) + '</p>' +
+    '<p class="ok-s8-p"><b>' + fmt(B.knowLabel) + '</b> ' + fmt(B.know) + '</p>' +
+    '<a class="ok-btn-navy" href="' + esc(B.url) + '" target="_blank" rel="noopener" aria-label="' + esc(B.linkAria) + '">' + esc(B.link) + ic('arrowR') + '</a></article>' +
+    '<article class="ok-s8-card"><span class="ok-chip is-navy">' + ic('play') + esc(V.chip) + '</span><h3 class="ok-s8-h">' + esc(V.title) + '</h3><p class="ok-s8-meta">' + esc(V.meta) + '</p>' +
+    '<div class="ok-mission-box"><span class="ok-chip is-cream">' + ic('target') + esc(V.missionLabel) + '</span><p>' + fmt(V.mission) + '</p></div>' +
+    '<p class="ok-s8-p">' + fmt(V.text) + '</p><div class="ok-yt-wrap">' + videoHTML(V.player) + '</div></article></div>' +
+    '<div class="ok-cta-wrap"><button type="button" class="ok-replay" data-act="replay">' + ic('refresh') + esc(C.replay) + '</button></div>';
+};
+
+/* =====================================================================
+   ÉVÉNEMENTS
+   ===================================================================== */
+var CHOOSE = { s2: chooseS2, s5: chooseS5, s6: chooseS6, s7: chooseS7 };
+var ACT = {
+  next: function (el) { var n = parseInt(el.getAttribute('data-to'), 10); if (n) goToStep(n, 'fwd'); },
+  goto: function (el) { var n = parseInt(el.getAttribute('data-step'), 10); if (!n || n === state.step || n > state.maxStep) return; goToStep(n, n < state.step ? 'back' : 'fwd'); },
+  back: function () { if (state.step > 1) goToStep(state.step - 1, 'back'); },
+  quit: openModal, stay: closeModal,
+  doQuit: function () { closeModal(); resetAll(); },
+  replay: resetAll,
+  sound: toggleSound, mascot: toggleBubble,
+  choose: function (el) { var g = el.getAttribute('data-group'), f = CHOOSE[g]; if (f && g === 's' + state.step) f(parseInt(el.getAttribute('data-i'), 10)); },
+  s1validate: s1Validate, s2send: s2Send, s3next: s3Next, s3loop: s3Loop, s4clear: s4Clear,
+  s5next: s5Next, s6next: s6Next,
+  s7play: function () { s7SetPhase('quiz'); }, s7next: s7Next,
+  s7quote: function () { swapStage(function () { state.s7.phase = 'quote'; s7Quote(true); }, 'fwd'); },
+  playVideo: playVideo
+};
+var FREE = { quit: 1, stay: 1, doQuit: 1, sound: 1, mascot: 1 };
+root.addEventListener('click', function (e) {
+  var modal = $('.ok-modal');
+  if (!modal.hidden && e.target === modal) { closeModal(); return; }
+  var a = e.target.closest ? e.target.closest('[data-act]') : null;
+  if (!a || !root.contains(a) || a.disabled) return;
+  var name = a.getAttribute('data-act');
+  if (busy && !FREE[name]) return;
+  if (name !== 'choose' && name !== 'mascot') { restart(a, 'ok-pulse'); sfx('click'); }
+  if (ACT[name]) ACT[name](a, e);
+});
+root.addEventListener('input', function (e) {
+  var r = e.target;
+  if (r && r.classList && r.classList.contains('ok-range')) onRange(r);
+});
+document.addEventListener('keydown', function (e) {
+  var modal = $('.ok-modal');
+  if (e.key === 'Escape' || e.key === 'Esc') {
+    if (!modal.hidden) { e.preventDefault(); closeModal(); }
+    else if (!$('#ok-bubble').hidden) { e.preventDefault(); closeBubble(); }
+    return;
+  }
+  if (e.key === 'Tab' && !modal.hidden) { /* focus piégé dans la modale */
+    var f = $$('button', modal), first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); focusEl(last); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); focusEl(first); }
+    else if (f.indexOf(document.activeElement) < 0) { e.preventDefault(); focusEl(first); }
+  }
+});
+var resizeT = null;
+window.addEventListener('resize', function () {
+  clearTimeout(resizeT);
+  resizeT = setTimeout(function () {
+    if (busy) return;
+    if (state.step === 3 && state.s3.loop) drawLoop(false);
+    if (state.step === 4 && $('#ok-triframe')) {
+      var mode = ($('#ok-triframe').clientWidth >= 560) ? 'wide' : 'narrow';
+      if (mode !== triMode) {
+        mountTri();
+        var b = $('.ok-smoke-btn'); if (b) b.style.top = buildTri(state.s4.phase).smokeTop + '%';
+      }
+    }
+  }, 150);
+});
+
+/* =====================================================================
+   DÉMARRAGE
+   ===================================================================== */
+buildChrome();
+RENDER[1](false);
+updateChrome();
+})();
+</script>
+</body>
+</html>
